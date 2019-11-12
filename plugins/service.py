@@ -1,11 +1,15 @@
+import configparser
 import json
 
 from flask import Flask, request, Response, app
 from slackbot.bot import respond_to, default_reply
 
+conf = configparser.ConfigParser()
+members = conf.read('./members.ini')
 
-members_2525 = ['陳', '伊藤', '庵谷', '勝又', '斎藤', '佐藤', '鈴木', '中野', '永野']
-members_2721 = ['村田', '清水', '若月', '梅田', '誓山']
+members_2525 = members["members"]["m2525"].split()
+members_2721 = members["members"]["m2721"].split()
+
 count = 0
 
 
