@@ -1,17 +1,19 @@
 import configparser
-import json
 
-from flask import Flask, request, Response, app
+from flask import app
 from slackbot.bot import respond_to, default_reply
 
 conf = configparser.ConfigParser()
 members = conf.read('./members.ini')
 
-members_2525 = members["members"]["m2525"].split()
-members_2721 = members["members"]["m2721"].split()
+members_2525 = members['members']['m2525'].split()
+members_2721 = members['members']['m2721'].split()
+members_giji = members['members']['giji'].split()
 
 count = 0
-
+giji_duty = 0
+trash_duty_2525 = 0
+trash_duty_2721 = 0
 
 @app.route('/')
 def hello_world():
@@ -26,6 +28,12 @@ def replayMinutesTaker(message, name):
 @respond_to(r'ごみ|ゴミ|trash|garbage')
 def replayTrashTaker(message, name):
     message.replay('次回のゴミ捨て当番は{}さんです.'.format(name))
+
+
+def whoIsOnDuty(membersList):
+    global giji_duty
+
+
 
 
 @default_reply()
