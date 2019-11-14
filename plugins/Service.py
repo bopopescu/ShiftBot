@@ -1,19 +1,27 @@
 import configparser
 
+from plugins import Cycle
+
 from flask import app
 from slackbot.bot import respond_to, default_reply
 
 conf = configparser.ConfigParser()
 members = conf.read('./members.ini')
 
-members_2525 = members['members']['m2525'].split()
-members_2721 = members['members']['m2721'].split()
-members_giji = members['members']['giji'].split()
+
+#####################################
+# あんまりよろしくない気がする
+#####################################
+
+members_2525 = Cycle(members['members']['m2525'].split())
+members_2721 = Cycle(members['members']['m2721'].split())
+members_giji = Cycle(members['members']['giji'].split())
 
 count = 0
 giji_duty = 0
 trash_duty_2525 = 0
 trash_duty_2721 = 0
+
 
 @app.route('/')
 def hello_world():
@@ -21,19 +29,52 @@ def hello_world():
 
 
 @respond_to('議事録')
-def replayMinutesTaker(message, name):
-    message.replay('次回の議事録当番は{}さんです。'.format(name))
+def replayMinutesTaker(message):
+    message.replay('次回の議事録当番は{}さんです。'.format(whoIsOnMinutesDuty()))
 
 
 @respond_to(r'ごみ|ゴミ|trash|garbage')
-def replayTrashTaker(message, name):
-    message.replay('次回のゴミ捨て当番は{}さんです.'.format(name))
+def replayTrashTaker(message, room):
+    if room == '2525':
+        message.replay('次回のゴミ捨て当番は{}さんです.'.format(whoIsOnTrashDutyIn2525()))
+    elif room == '2721':
+        message.replay('次回のゴミ捨て当番は{}さんです.'.format(whoIsOnTrashDutyIn2721()))
 
 
-def whoIsOnDuty(membersList):
+#####################################
+# cycleとかいうクソださ変数名何とかして.
+# 一つにできん?
+#####################################
+
+def whoIsOnMinutesDuty():
     global giji_duty
+    return members_giji.present()
 
 
+def whoIsOnTrashDutyIn2525():
+    global trash_duty_2525
+    return members_2525.present()
+
+
+def whoIsOnTrashDutyIn2721():
+    global trash_duty_2721
+    return members_2721.present()
+
+
+@respond_to(r'^(?=.*[ごみ|ゴミ|trash|garbage])(?=.*[終|done])(?=2525).*$')
+def whosNext():
+    # if 当番完了の合図があったら
+    nextDuty = members_2525.next()
+    replayTrashTaker('2525')
+    return nextDuty
+
+
+@respond_to(r'^(?=.*[議事録])(?=.*[終|done]).*$')
+def whosNextMinutes():
+    # if 当番完了の合図があったら
+    nextDuty = members_2525.next()
+    replayMinutesTaker()
+    return nextDuty
 
 
 @default_reply()

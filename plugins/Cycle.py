@@ -20,5 +20,5 @@ class Cycle:
         return self.list[self.i]
 
 
-# if __name__ == '__main__':
-#     Cycle()
+if __name__ == '__main__':
+    Cycle()
