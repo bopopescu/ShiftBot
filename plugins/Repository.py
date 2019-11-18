@@ -14,6 +14,7 @@ ysql = mysql.connector.connect(
 
 cur = ysql.cursol()
 
+
 def mod(num, size):
     q, m = divmod(size, num)
     if m != 0:
@@ -22,8 +23,13 @@ def mod(num, size):
         return size
 
 
+def ping(self):
+    # 定期的に実行
+    self.ysql.ping(reconnect=True)
+
+
 def nextTrash(self, room):
-    order = cur.excute('select trashDuty_order where room = %s and onDuty_trash = True',[room])
+    order = cur.excute('select trashDuty_order from members where room = %s and onDuty_trash = True', [room])
     if room == '2525':
         mem = 10
     elif room == '2721':
@@ -38,7 +44,7 @@ def nextTrash(self, room):
 
 
 def prevTrash(self, room):
-    order = cur.excute('select trashDuty_order where room = %s and onDuty_trash = True',[room])
+    order = cur.excute('select trashDuty_order from members where room = %s and onDuty_trash = True', [room])
     if room == '2525':
         mem = 10
     elif room == '2721':
@@ -52,12 +58,26 @@ def prevTrash(self, room):
         raise
 
 
-# def present(self):
+def presentTrash(self, room):
+    pres = cur.excute('select name from members where room = %s and onDuty_trash = TRUE', [room])
+    return pres
 
 
 # def reset(self):
 
 
-def ping(self):
-    # 定期的に実行
-    self.ysql.ping(reconnect=True)
+def nextMinutes():
+    order = cur.excute('select minutesDuty_order from members where onDuty_minutes = true')
+    try:
+        cur.excute('update members set onDuty_minutes = false where minutesDuty_order = %s', order)
+        cur.excute('update members set onDuty_minutes= TRUE where minutesDuty_order = %s', mod(order+1))
+        ysql.commit()
+    except:
+        ysql.rollback
+        raise
+
+
+def presentMinutes():
+    pres = cur.excute('select name from members where onDuty_minutes = TRUE')
+    return pres
+

@@ -1,6 +1,8 @@
 from flask import app
 from slackbot.bot import respond_to, default_reply
 
+from plugins import Repository as repo
+
 
 count = 0
 giji_duty = 0
@@ -25,10 +27,13 @@ def replayTrashTaker(message, room):
 # def whoIsOnMinutesDuty():
 
 
-# def whoIsOnTrashDutyIn2525(room):
+@respond_to(r'(ごみ|ゴミ|trash|garbage)')
+def replayTrashDutyIn2525(room):
+    repo.presentTrash('2525')
 
 
-# def whoIsOnTrashDutyIn2721():
+def replayTrashDutyIn2721():
+    repo.presentTrash('2721')
 
 
 # @respond_to(r'^(?=.*[ごみ|ゴミ|trash|garbage])(?=.*[終|done])(?=2525).*$')
