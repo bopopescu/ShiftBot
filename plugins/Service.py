@@ -15,25 +15,42 @@ def hello_world():
     return 'Hello World!'
 
 
-@respond_to('議事録')
-def replayMinutesTaker(message):
-    return None
-
-
-@respond_to(r'ごみ|ゴミ|trash|garbage')
-def replayTrashTaker(message, room):
-    return None
-
-# def whoIsOnMinutesDuty():
+@respond_to(r'(ごみ|ゴミ|trash|garbage)')
+def sendTrashDutyIn2525(message):
+    name = repo.presentTrash('2525')
+    message.send('2525室の次回のごみ捨て当番は%sさんです。', name)
 
 
 @respond_to(r'(ごみ|ゴミ|trash|garbage)')
-def replayTrashDutyIn2525(room):
-    repo.presentTrash('2525')
+def sendTrashDutyIn2721(message):
+    name = repo.presentTrash('2721')
+    message.send('2721室の次回のごみ捨て当番は%sさんです。', name)
 
 
-def replayTrashDutyIn2721():
-    repo.presentTrash('2721')
+@respond_to(r'(議事録|議事)')
+def sendMinutesTaker(message):
+    name = repo.presentMinutes()
+    message.send('次回の議事録当番は%sさんです。', name)
+
+
+def sendNextTrashDuty(message):
+    name2525 = repo.nextTrash('2525')
+    name2721 = repo.nextTrash('2721')
+    message.send('''次回のごみ捨て当番は\n
+                    2525室：%sさん\n
+                    2721室：%sさん\n
+                    です。よろしくお願いします。''', name2525, name2721)
+
+
+def sendNextMinutesDuty(message):
+    name = repo.nextMinutes()
+    message.send('''定例ミーティングお疲れさまです。\n
+                    次回の議事録当番は%sさんです。よろしくお願いします。''', name)
+
+
+def sendTodaysMinutesDuty(message):
+    name = repo.presentMinutes()
+    message.send('本日の議事録当番は%sさんです。よろしくお願いします。', name)
 
 
 # @respond_to(r'^(?=.*[ごみ|ゴミ|trash|garbage])(?=.*[終|done])(?=2525).*$')
