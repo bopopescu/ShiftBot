@@ -4,6 +4,12 @@ from slackbot.bot import respond_to, default_reply
 from plugins import Repository as repo
 
 
+@respond_to('(ごみ|ゴミ|trash|garbage)')
+def sendTrashDuty2525AND2721(message, args):
+    sendTrashDutyIn2525(message, args)
+    sendTrashDutyIn2721(message, args)
+
+
 @respond_to(r'^(?=.*(ごみ|ゴミ|trash|garbage))(?=.*2525)')
 def sendTrashDutyIn2525(message, args):
     name = repo.presentTrash('2525')
@@ -48,7 +54,7 @@ def pingReply(message):
 count = 0
 
 
-@default_reply()
+# @default_reply()
 def easterEgg(message, args):
     global count
     count += 1
