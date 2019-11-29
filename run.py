@@ -1,13 +1,11 @@
 from flask import Flask, request, Response
 from slackbot.bot import Bot
-import plugins.Service as service
 import configparser
 import json
 
 
 app = Flask(__name__)
 
-# SlackのAPIを利用するためのトークンを設定ファイルから読み込む
 conf = configparser.ConfigParser()
 conf.read('./config.ini')
 VERIFICATION_TOKEN = conf['slack']['verification_token']

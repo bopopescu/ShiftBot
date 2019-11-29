@@ -44,14 +44,6 @@ def sendTodaysMinutesDuty(message, args):
     message.send('本日の議事録当番は%sさんです。よろしくお願いします。' % name)
 
 
-# @respond_to(r'^(?=.*[ごみ|ゴミ|trash|garbage])(?=.*[終|done])(?=2525).*$')
-# def whosNext():
-
-
-# @respond_to(r'^(?=.*[議事録])(?=.*[終|done]).*$')
-# def whosNextMinutes():
-
-
 @respond_to(r'^ping\s+\d+\.\d+\.\d+\.\d+\s*$')
 def pingReply(message):
     message.reply('それはpingのコマンドですね。実行できませんが。')
