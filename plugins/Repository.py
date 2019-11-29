@@ -1,5 +1,6 @@
 # coding: utf-8
 import configparser
+import sys
 
 import mysql.connector as sql
 
@@ -36,7 +37,8 @@ def presentTrash(room):
         result = cursor.fetchone()
         pres = result[0]
     except Exception as e:
-        e.with_traceback()
+        tb = sys.exc_info()[2]
+        e.with_traceback(tb)
         cursor.execute('select name from members where room = %s and onDuty_trash = TRUE' % room)
         result = cursor.fetchone()
         pres = result[0]
@@ -59,7 +61,8 @@ def nextTrash(room):
         return presentTrash(room)
     except Exception as e:
         transaction.rollback()
-        print(e)
+        tb = sys.exc_info()[2]
+        e.with_traceback(tb)
         raise
 
 
@@ -78,7 +81,8 @@ def prevTrash(room):
         transaction.commit()
     except Exception as e:
         transaction.rollback()
-        print(e)
+        tb = sys.exc_info()[2]
+        e.with_traceback(tb)
         raise
 
 
@@ -106,7 +110,8 @@ def nextMinutes():
         return presentMinutes()
     except Exception as e:
         transaction.rollback
-        e.with_traceback()
+        tb = sys.exc_info()[2]
+        e.with_traceback(tb)
         raise
 
 
@@ -132,7 +137,8 @@ def doneBehalfOfTrash():
         cursor.execute('update members set behalf_trash = false where name = %s' % name)
         transaction.commit()
     except Exception as e:
-        e.with_traceback()
+        tb = sys.exc_info()[2]
+        e.with_traceback(tb)
 
 
 def doneBehalfOfMinutes():
@@ -143,4 +149,5 @@ def doneBehalfOfMinutes():
         cursor.execute('update members set behalf_minutes = false where name = %s' % name)
         transaction.commit()
     except Exception as e:
-        e.with_traceback()
+        tb = sys.exc_info()[2]
+        e.with_traceback(tb)

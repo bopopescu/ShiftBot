@@ -4,14 +4,14 @@ from slackbot.bot import respond_to, default_reply
 from plugins import Repository as repo
 
 
-@respond_to(r'((ごみ)|(ゴミ)|(trash)|(garbage))')
+@respond_to(r'^(?=.*(ごみ|ゴミ|trash|garbage))(?=.*2525)')
 def sendTrashDutyIn2525(message, args):
     print(args)
     name = repo.presentTrash('2525')
     message.send('2525室の次回のごみ捨て当番は%sさんです。' % name)
 
 
-@respond_to(r'((ごみ)|(ゴミ)|(trash)|(garbage))')
+@respond_to(r'^(?=.*(ごみ|ゴミ|trash|garbage))(?=.*2721)')
 def sendTrashDutyIn2721(message, args):
     name = repo.presentTrash('2721')
     message.send('2721室の次回のごみ捨て当番は%sさんです。' % name)
@@ -51,6 +51,12 @@ def sendTodaysMinutesDuty(message, args):
 # @respond_to(r'^(?=.*[議事録])(?=.*[終|done]).*$')
 # def whosNextMinutes():
 
+
+@respond_to(r'^ping\s+\d+\.\d+\.\d+\.\d+\s*$')
+def pingReply(message):
+    message.reply('それはpingのコマンドですね。実行できませんが。')
+
+
 count = 0
 
 
@@ -58,7 +64,7 @@ count = 0
 def easterEgg(message, args):
     global count
     count += 1
-    message.reply('received')
+    message.reply('received'+args)
     if count % 500 == 0 and count < 1000:
         message.reply('{}回目の意味のないメッセージを受信しました！この調子です！！！'.format(str(count)))
         message.react('+1')
