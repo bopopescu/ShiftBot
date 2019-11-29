@@ -2,7 +2,9 @@ from flask import Flask, request, Response
 from slackbot.bot import Bot
 import configparser
 import json
+import sys
 
+sys.dont_write_bytecode = True
 
 app = Flask(__name__)
 
