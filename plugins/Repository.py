@@ -27,7 +27,6 @@ def mod(num, size):
 
 
 def ping():
-    # 定期的に実行
     cursor.ping(reconnect=True)
 
 
@@ -187,7 +186,7 @@ def nextMinutes():
 
 def behalfOfTrash(room, name):
     """
-    動作確認：未
+    動作確認：未/
     """
     duty = presentTrash(room)
     cursor.execute('update members set behalf_trash = TRUE where name = %s' % name)
