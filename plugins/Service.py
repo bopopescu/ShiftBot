@@ -4,7 +4,7 @@ from slackbot.bot import respond_to
 from plugins import Repository as repo
 
 
-@respond_to(r'^(?=.*(ごみ|ゴミ))(?!.*(2525|2721|終)).*$')
+@respond_to(r'^(?=.*(ごみ|ゴミ))(?!.*(2525|2721|終|代わ))')
 def sendTrashDuty2525AND2721(message, *args):
     """
     (ごみorゴミ)を含み,(2525or2721or「終」)を含まないメッセージに対し
@@ -12,17 +12,14 @@ def sendTrashDuty2525AND2721(message, *args):
 
 
     Args:
-        message (str) : メッセージを送信するための引数
-        args    (str) : respond_to()内の正規表現にマッチしたメッセージ本文
+        message (Message) : メッセージに関する情報を持ったクラスのインスタンス
+        args    (str)     : respond_to()内の正規表現にマッチしたメッセージ本文
 
     Returns:
         None
 
     """
 
-    for arg in args:
-        print(type(arg))
-        print(arg)  # メッセージ本文+NoneObjectを拾う
     name2525 = repo.presentTrash('2525')
     name2721 = repo.presentTrash('2721')
     message.send('次回のごみ捨て当番は\n2525室：%sさん\n2721室：%sさん\nです。' % (name2525, name2721))
@@ -35,16 +32,13 @@ def sendTrashDutyIn2525(message, *args):
     2525室の次回のごみ捨て当番をリプライする。
 
     Args:
-        message (str) : メッセージを送信するための引数
-        args    (str) : respond_to()内の正規表現にマッチしたメッセージ本文
+        message (Message) : メッセージに関する情報を持ったクラスのインスタンス
+        args    (str)     : respond_to()内の正規表現にマッチしたメッセージ本文
 
     Return:
         None
     """
 
-    for arg in args:
-        print(type(arg))
-        print(arg)
     name = repo.presentTrash('2525')
     message.send('2525室の次回のごみ捨て当番は%sさんです。' % name)
 
@@ -56,37 +50,31 @@ def sendTrashDutyIn2721(message, *args):
     2721室の次回のごみ捨て当番をリプライする.
 
     Args:
-        message (str) : メッセージを送信するための引数
-        args    (str) : respond_to()内の正規表現にマッチしたメッセージ本文
+        message (Message) : メッセージに関する情報を持ったクラスのインスタンス
+        args    (str)     : respond_to()内の正規表現にマッチしたメッセージ本文
 
     Return:
         None
     """
 
-    for arg in args:
-        print(type(arg))
-        print(arg)
     name = repo.presentTrash('2721')
     message.send('2721室の次回のごみ捨て当番は%sさんです。' % name)
 
 
-@respond_to(r'^(?=.*(議事録|議事))(?!.*(終|今日))')
+@respond_to(r'^(?=.*(議事録|議事))(?!.*(終|今日|代わ))')
 def sendMinutesTaker(message, *args):
     """
     (議事録or議事)が含まれているメッセージに対し
     次回の議事録当番をリプライする.
 
     Args:
-        message (str) : メッセージを送信するための引数
-        args    (str) : respond_to()内の正規表現にマッチしたメッセージ本文
+        message (Message) : メッセージに関する情報を持ったクラスのインスタンス
+        args    (str)     : respond_to()内の正規表現にマッチしたメッセージ本文
 
     Return:
         None
     """
 
-    for arg in args:
-        print(type(arg))
-        print(arg)
     name = repo.presentMinutes()
     message.send('次回の議事録当番は%sさんです。' % name)
 
@@ -98,8 +86,8 @@ def sendNextTrashDutyIn2525(message, *args):
     2525室の次回のゴミ捨て当番を更新し,その内容をリプライする.
 
     Args:
-        message (str) : メッセージを送信するための引数
-        args    (str) : respond_to()内の正規表現にマッチしたメッセージ本文
+        message (Message) : メッセージに関する情報を持ったクラスのインスタンス
+        args    (str)     : respond_to()内の正規表現にマッチしたメッセージ本文
 
     Return:
         None
@@ -119,8 +107,8 @@ def sendNextTrashDuty(message, *args):
     2721室の次回のゴミ捨て当番を更新し,その内容をリプライする.
 
     Args:
-        message (str) : メッセージを送信するための引数
-        args    (str) : respond_to()内の正規表現にマッチしたメッセージ本文
+        message (Message) : メッセージに関する情報を持ったクラスのインスタンス
+        args    (str)     : respond_to()内の正規表現にマッチしたメッセージ本文
 
     Return:
         None
@@ -141,16 +129,14 @@ def sendNextMinutesDuty(message, *args):
     定例ミーティング終了時に呼び出されることを想定している.
 
     Args:
-        message (str) : メッセージを送信するための引数
-        args    (str) : respond_to()内の正規表現にマッチしたメッセージ本文
+        message (Message) : メッセージに関する情報を持ったクラスのインスタンス
+        args    (str)     : respond_to()内の正規表現にマッチしたメッセージ本文
 
     Return:
         None
     """
 
-    for arg in args:
-        print(type(arg))
-        print(arg)
+    repo.doneMinutesDutyBehalfOf()
     name = repo.nextMinutes()
     message.send('定例ミーティングお疲れさまです。\n次回の議事録当番は%sさんです。よろしくお願いします。' % name)
 
@@ -164,8 +150,8 @@ def sendTodaysMinutesDuty(message, *args):
     メッセージの内容が変わっているのみで,sendMinutesTaker()と同じ動作をする.
 
     Args:
-        message (str) : メッセージを送信するための引数
-        args    (str) : respond_to()内の正規表現にマッチしたメッセージ本文
+        message (Message) : メッセージに関する情報を持ったクラスのインスタンス
+        args    (str)     : respond_to()内の正規表現にマッチしたメッセージ本文
 
     Return:
         None
@@ -176,3 +162,28 @@ def sendTodaysMinutesDuty(message, *args):
         print(arg)
     name = repo.presentMinutes()
     message.send('本日の議事録当番は%sさんです。よろしくお願いします。' % name)
+
+
+@respond_to(r'^(?=.*(代理|代わ))(?=.*(ゴミ|ごみ))')
+def willDiscardBehalfOf(message, *args):
+    print(message.body)
+    message.reply('printed!!')
+
+
+@respond_to(r'^(?=.*(代理|代わ))(?=.*(議事録|議事))')
+def willTakeBehalfOf(message, *args):
+    """
+    条件に合うメッセージに対し,
+    代理の議事録当番を登録し,その内容をリプライする.
+
+    Args:
+        message (Message) : メッセージに関する情報を持ったクラスのインスタンス
+        args    (str)     : respond_to()内の正規表現にマッチしたメッセージ本文
+
+    Returns:
+        None
+    """
+
+    repo.minutesDutyBehalfOf(message.body['user'])
+    name = repo.presentMinutes()
+    message.reply('次回の議事録当番は%sさんに変更しました。よろしくお願いします。' % name)

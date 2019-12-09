@@ -35,3 +35,4 @@ def prevTrash2721(message):
     repo.prevTrash('2721')
     message.reply(repo.presentTrash('2721'))
 
+

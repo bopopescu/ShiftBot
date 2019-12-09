@@ -14,7 +14,7 @@ VERIFICATION_TOKEN = conf['slack']['verification_token']
 
 
 @app.route('/')
-def hello_world():
+def helloWorld():
     return 'This is slack bot for Lab.'
 
 

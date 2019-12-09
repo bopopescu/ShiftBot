@@ -5,14 +5,14 @@ import sys
 import mysql.connector as sql
 
 parser = configparser.ConfigParser()
-parser.read('./mysql.ini')
+parser.read("./mysql.ini")
 
 transaction = sql.connect(
-    host=parser['sql']['host'],
-    port=parser['sql']['port'],
-    user=parser['sql']['user'],
-    password=parser['sql']['password'],
-    database=parser['sql']['database']
+    host=parser["sql"]["host"],
+    port=parser["sql"]["port"],
+    user=parser["sql"]["user"],
+    password=parser["sql"]["password"],
+    database=parser["sql"]["database"]
 )
 
 cursor = transaction.cursor()
@@ -45,11 +45,11 @@ def presentTrash(room):
         pres    (str) : 次回のごみ捨て当番者の名前(名字)
     """
     try:
-        cursor.execute('select name from members where room = %s and behalf_trash = TRUE' % room)
+        cursor.execute("select name from members where room = '%s' and behalf_trash = TRUE" % room)
         result = cursor.fetchall()
         pres = result[0]
     except Exception as e:
-        cursor.execute('select name from members where room = %s and onDuty_trash = TRUE' % room)
+        cursor.execute("select name from members where room = '%s' and onDuty_trash = TRUE" % room)
         result = cursor.fetchone()
         print(result)
         pres = result[0]
@@ -71,18 +71,18 @@ def nextTrash(room):
         presentTrash(room)    (str) : 次回のごみ捨て当番者の名前(名字)
     """
 
-    cursor.execute('select trashDuty_order from members where room = %s and onDuty_trash = TRUE' % room)
+    cursor.execute("select trashDuty_order from members where room = '%s' and onDuty_trash = TRUE" % room)
     result = cursor.fetchone()
     order = int(result[0])
 
-    if room == '2525':
+    if room == "2525":
         mem = 8
-    elif room == '2721':
+    elif room == "2721":
         mem = 5
     try:
-        cursor.execute('update members set onDuty_trash = FALSE where room = %s and trashDuty_order = %s' % (room, order))
+        cursor.execute("update members set onDuty_trash = FALSE where room = '%s' and trashDuty_order = '%s'" % (room, order))
         transaction.commit()
-        cursor.execute('update members set onDuty_trash = TRUE where room = %s and trashDuty_order = %s' % (room, mod(order + 1, mem)))
+        cursor.execute("update members set onDuty_trash = TRUE where room = '%s' and trashDuty_order = '%s'" % (room, mod(order + 1, mem)))
         transaction.commit()
     except Exception as e:
         transaction.rollback()
@@ -107,17 +107,17 @@ def prevTrash(room):
         presentTrash(room)    (str) : 次回のごみ捨て当番者の名前(名字)
     """
 
-    cursor.execute('select trashDuty_order from members where room = %s and onDuty_trash = TRUE' % room)
+    cursor.execute("select trashDuty_order from members where room = '%s' and onDuty_trash = TRUE" % room)
     result = cursor.fetchone()
     order = int(result[0])
 
-    if room == '2525':
+    if room == "2525":
         mem = 8
-    elif room == '2721':
+    elif room == "2721":
         mem = 5
     try:
-        cursor.execute('update members set onDuty_trash = FALSE where room = %s and trashDuty_order = %s' % (room, order))
-        cursor.execute('update members set onDuty_trash = TRUE where room = %s and trashDuty_order = %s' % (room, mod(order - 1, mem)))
+        cursor.execute("update members set onDuty_trash = FALSE where room = '%s' and trashDuty_order = '%s'" % (room, order))
+        cursor.execute("update members set onDuty_trash = TRUE where room = '%s' and trashDuty_order = '%s'" % (room, mod(order - 1, mem)))
         transaction.commit()
     except Exception as e:
         transaction.rollback()
@@ -140,12 +140,12 @@ def presentMinutes():
     """
 
     try:
-        cursor.execute('select name from members where behalf_minutes = TRUE')
+        cursor.execute("select name from members where behalf_minutes = TRUE")
         result = cursor.fetchone()
         pres = result[0]
     except Exception as e:
         print(e)
-        cursor.execute('select name from members where onDuty_minutes = TRUE')
+        cursor.execute("select name from members where onDuty_minutes = TRUE")
         result = cursor.fetchone()
         pres = result[0]
     return pres
@@ -157,7 +157,7 @@ def nextMinutes():
     はじめに議事録当番の順番を変数 order に代入.
     次に議事録当番を回しているメンバーの総数を変数 mem に代入
     order と mem の内容から次回の議事録当番を決定し,データベースを更新する.
-    更新後,presentMinutes()メソッドを呼出すことで,次回の議事録当番の名前を返す.
+    更新後,presentMinutes()メソッドを呼出すことで,更新後の議事録当番の名前を返す.
 
     Args:
 
@@ -165,16 +165,16 @@ def nextMinutes():
         presentTrash(room)    (str) : 次回のごみ捨て当番者の名前(名字)
     """
 
-    cursor.execute('select minutesDuty_order from members where onDuty_minutes = TRUE')
+    cursor.execute("select minutesDuty_order from members where onDuty_minutes = TRUE")
     result = cursor.fetchone()
     order = int(result[0])
 
-    cursor.execute('select count(*) from members where minutesDuty_order is not null')
+    cursor.execute("select count(*) from members where minutesDuty_order is not null")
     rs = cursor.fetchone()
     mem = int(rs[0])
     try:
-        cursor.execute('update members set onDuty_minutes = FALSE where minutesDuty_order = %s' % order)
-        cursor.execute('update members set onDuty_minutes= TRUE where minutesDuty_order = %s' % mod(order + 1, mem))
+        cursor.execute("update members set onDuty_minutes = FALSE where minutesDuty_order = '%s'" % order)
+        cursor.execute("update members set onDuty_minutes= TRUE where minutesDuty_order = '%s'" % mod(order + 1, mem))
         transaction.commit()
         return presentMinutes()
     except Exception as e:
@@ -184,52 +184,61 @@ def nextMinutes():
         raise
 
 
-def behalfOfTrash(room, name):
+def trashDutyBehalfOf(room, name):
     """
-    動作確認：未/
+    動作確認：未
     """
     duty = presentTrash(room)
-    cursor.execute('update members set behalf_trash = TRUE where name = %s' % name)
+    cursor.execute("update members set behalf_trash = TRUE where name = '%s'" % name)
     transaction.commit()
     return duty
 
 
-def behalfOfMinutes(name):
+def minutesDutyBehalfOf(slkid):
+    """ 代理の議事録当番を登録する.
+
+    引数として受け取ったuserIDから代理の議事録当番を決定し,データベースを更新する.
+    更新後,presentMinutes()を呼び出し,議事録当番の名前を返す.
+
+    Args:
+        slkid   (str) : 代理で議事録当番をする人(送信者)のSlackID
+
+    Returns:
+        presentMinutes()    (str) : 次回の議事録当番者の名前(名字)
+
     """
-    動作確認：未
-    """
-    duty = presentTrash()
-    cursor.execute('update members set behalf_minutes = TRUE where name = %s' % name)
+    cursor.execute("update members set behalf_minutes = TRUE where SLID = '%s'" % slkid)
     transaction.commit()
-    return duty
+    return presentMinutes()
 
 
-def doneBehalfOfTrash():
+def doneTrashDutyBehalfOf():
     """
     動作確認：未
     """
 
     try:
-        cursor.excute('select name from members where behalf_trash = TRUE')
+        cursor.excute("select name from members where behalf_trash = TRUE")
         result = cursor.fetchone()
         name = result[0]
-        cursor.execute('update members set behalf_trash = FALSE where name = %s' % name)
+        cursor.execute("update members set behalf_trash = FALSE where name = '%s'" % name)
         transaction.commit()
     except Exception as e:
         tb = sys.exc_info()[2]
         e.with_traceback(tb)
 
 
-def doneBehalfOfMinutes():
+def doneMinutesDutyBehalfOf():
     """
     動作確認：未
     """
     try:
-        cursor.excute('select name from members where behalf_minutes = TRUE')
+        cursor.execute("select name from members where behalf_minutes = TRUE")
         result = cursor.fetchone()
         name = result[0]
-        cursor.execute('update members set behalf_minutes = FALSE where name = %s' % name)
+        cursor.execute("update members set behalf_minutes = FALSE where name = '%s'" % name)
         transaction.commit()
     except Exception as e:
         tb = sys.exc_info()[2]
         e.with_traceback(tb)
+        raise
