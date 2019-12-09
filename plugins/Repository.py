@@ -230,7 +230,10 @@ def doneTrashDutyBehalfOf():
 
 def doneMinutesDutyBehalfOf():
     """
-    動作確認：未
+    代理の議事録当番を解除する.
+
+    Returns:
+        None
     """
     try:
         cursor.execute("select name from members where behalf_minutes = TRUE")
