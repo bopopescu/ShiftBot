@@ -46,7 +46,7 @@ def presentTrash(room):
     """
     try:
         cursor.execute("select name from members where room = '%s' and behalf_trash = TRUE" % room)
-        result = cursor.fetchall()
+        result = cursor.fetchone()
         pres = result[0]
     except Exception as e:
         cursor.execute("select name from members where room = '%s' and onDuty_trash = TRUE" % room)
