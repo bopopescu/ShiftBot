@@ -114,9 +114,6 @@ def sendNextTrashDuty(message, *args):
         None
     """
 
-    for arg in args:
-        print(type(arg))
-        print(arg)  # 議事or議事録しか拾えない(search:肯定先読み)
     name2721 = repo.nextTrash('2721')
     message.send('ありがとうございます。2721室の次回のごみ捨て当番は%sさんです。よろしくお願いします。' % name2721)
 

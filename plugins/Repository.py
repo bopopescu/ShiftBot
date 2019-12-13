@@ -72,10 +72,10 @@ def nextTrash(room):
     result = cursor.fetchone()
     order = int(result[0])
 
-    if room == "2525":
-        mem = 8
-    elif room == "2721":
-        mem = 5
+    cursor.execute("select count(*) from members where room = %s and trashDuty_order is not NULL group by room" % room)
+    result = cursor.fetchone()
+    mem = int(result[0])
+    
     try:
         cursor.execute("update members set onDuty_trash = FALSE where room = '%s' and trashDuty_order = '%s'" % (room, order))
         transaction.commit()
