@@ -232,5 +232,6 @@ def willTakeBehalfOf(message, *args):
 
 @default_reply()
 def getSlackId(message, *args):
-    logger.logInfo(message.body['user'])
+    for arg in args:
+        logger.logInfo(message.body['user'] + ' : ' + arg)
     message.reply('''「ごみ」を含む文章：\n\t→次回の両室のゴミ当番\n「ごみ」と「部屋番号(半角)」を含む文章：\n\t→該当部屋の次回のごみ捨て当番\n「ごみ」と「終」を含む文章：\n\t→次回のゴミ捨て当番が更新されるのでごみ捨てを行った人が送信してください。\n「議事(録)」を含む文章：\n\t→次回の議事録当番\n「議事(録)」と「終」を含む文章：\n\t→次回の議事録当番が更新されるので議事録当番を行った人が送信してください。''')
