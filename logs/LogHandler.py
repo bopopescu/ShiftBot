@@ -7,7 +7,7 @@ logger = getLogger("ShiftBotLog")
 logger.setLevel(logging.INFO)
 
 logHandler = StreamHandler()
-logfileHandler = FileHandler("ShiftBotLog.log", "a")
+logfileHandler = FileHandler(filename="ShiftBotLog.log", mode="a")
 
 # ハンドラが出力するエラーメッセージのレベル
 logHandler.setLevel(logging.DEBUG)

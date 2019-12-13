@@ -229,6 +229,19 @@ def willTakeBehalfOf(message, *args):
     name = repo.presentMinutes()
     message.reply('次回の議事録当番は%sさんに変更しました。よろしくお願いします。' % name)
 
-@listen_to(r'.*')
+
+@default_reply()
 def getSlackId(message, *args):
     logger.logInfo(message.body['user'] + ' : ' + message.body['blocks'][0]['elements'][0]['elements'][0]['text'])
+    message.reply('''
+「ごみ」を含む文章：
+→次回の両室のゴミ当番
+「ごみ」と「部屋番号(半角)」を含む文章：
+→該当部屋の次回のごみ捨て当番
+「ごみ」と「終」を含む文章：
+→次回のゴミ捨て当番が更新されるのでごみ捨てを行った人が送信してください。
+「議事(録)」を含む文章：
+→次回の議事録当番
+「議事(録)」と「終」を含む文章：
+→次回の議事録当番が更新されるのでごみ捨てを行った人が送信してください。
+''')
