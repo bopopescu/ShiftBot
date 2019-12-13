@@ -20,3 +20,9 @@ logfileHandler.setFormatter(logFormat)
 
 logger.addHandler(logHandler)
 logger.addHandler(logfileHandler)
+
+def logInfo(methodName, msg, reply):
+    logger.info("%s() detect '%s'.\tReply'%s'" % (methodName, msg, reply))
+
+def logException(text):
+    logger.exception(text)

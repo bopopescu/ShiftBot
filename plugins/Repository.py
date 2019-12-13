@@ -1,4 +1,6 @@
 # coding: utf-8
+from logs import LogHandler as logs
+
 import configparser
 import sys
 
@@ -44,12 +46,14 @@ def presentTrash(room):
     try:
         cursor.execute("select name from members where room = '%s' and behalf_trash = TRUE" % room)
         result = cursor.fetchone()
-        pres = result[0]
+        if result is not None:
+            pres = result[0]
+        else:
+            cursor.execute("select name from members where room = '%s' and onDuty_trash = TRUE" % room)
+            result = cursor.fetchone()
+            pres = result[0]
     except Exception as e:
-        cursor.execute("select name from members where room = '%s' and onDuty_trash = TRUE" % room)
-        result = cursor.fetchone()
-        print(result)
-        pres = result[0]
+        logs.logException(e)
     return pres
 
 
@@ -83,9 +87,7 @@ def nextTrash(room):
         transaction.commit()
     except Exception as e:
         transaction.rollback()
-        tb = sys.exc_info()[2]
-        e.with_traceback(tb)
-        raise
+        logs.logException(e)
     return presentTrash(room)
 
 
@@ -118,9 +120,7 @@ def prevTrash(room):
         transaction.commit()
     except Exception as e:
         transaction.rollback()
-        tb = sys.exc_info()[2]
-        e.with_traceback(tb)
-        raise
+        logs.logException(e)
 
 
 def presentMinutes(*grade):
@@ -139,14 +139,17 @@ def presentMinutes(*grade):
     try:
         cursor.execute("select name from members where behalf_minutes = TRUE")
         result = cursor.fetchone()
-        pres = result[0]
-    except Exception as e:
-        if grade is not None:
-            cursor.execute("select name from members where grade not in ('b3', '%s') and onDuty_minutes = TRUE" % grade)
+        if result is not None:
+            pres = result[0]
         else:
-            cursor.execute("select name from members where onDuty_minutes = TRUE")
-        result = cursor.fetchone()
-        pres = result[0]
+            if grade is not None:
+                cursor.execute("select name from members where grade not in ('b3', '%s') and onDuty_minutes = TRUE" % grade)
+            else:
+                cursor.execute("select name from members where onDuty_minutes = TRUE")
+            result = cursor.fetchone()
+            pres = result[0]
+    except Exception as e:
+        logs.logException(e)
     return pres
 
 
@@ -177,10 +180,8 @@ def nextMinutes():
         transaction.commit()
         return presentMinutes()
     except Exception as e:
-        transaction.rollback
-        tb = sys.exc_info()[2]
-        e.with_traceback(tb)
-        raise
+        transaction.rollback()
+        logs.logException(e)
 
 
 def nextMinutesInBusySeason(prevGrade):
@@ -198,10 +199,8 @@ def nextMinutesInBusySeason(prevGrade):
         transaction.commit()
         return presentMinutes(prevGrade)
     except Exception as e:
-        transaction.rollback
-        tb = sys.exc_info()[2]
-        e.with_traceback(tb)
-        raise
+        transaction.rollback()
+        logs.logException(e)
 
 
 def trashDutyBehalfOf(room, name):
@@ -244,8 +243,8 @@ def doneTrashDutyBehalfOf():
         cursor.execute("update members set behalf_trash = FALSE where name = '%s'" % name)
         transaction.commit()
     except Exception as e:
-        tb = sys.exc_info()[2]
-        e.with_traceback(tb)
+        transaction.rollback()
+        logs.logException(e)
 
 
 def doneMinutesDutyBehalfOf():
@@ -264,6 +263,5 @@ def doneMinutesDutyBehalfOf():
         cursor.execute("update members set behalf_minutes = FALSE where name = '%s'" % name)
         transaction.commit()
     except Exception as e:
-        tb = sys.exc_info()[2]
-        e.with_traceback(tb)
-        raise
+        transaction.rollback()
+        logs.logException(e)
