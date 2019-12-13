@@ -72,7 +72,7 @@ def nextTrash(room):
     result = cursor.fetchone()
     order = int(result[0])
 
-    cursor.execute("select count(*) from members where room = %s and trashDuty_order is not NULL group by room" % room)
+    cursor.execute("select count(*) from members where room = '%s' and trashDuty_order is not NULL group by room" % room)
     result = cursor.fetchone()
     mem = int(result[0])
 
@@ -142,7 +142,7 @@ def presentMinutes(*grade):
         pres = result[0]
     except Exception as e:
         if grade is not None:
-            cursor.execute("select name from members where grade not in ('b3', %s) and onDuty_minutes = TRUE" % grade)
+            cursor.execute("select name from members where grade not in ('b3', '%s') and onDuty_minutes = TRUE" % grade)
         else:
             cursor.execute("select name from members where onDuty_minutes = TRUE")
         result = cursor.fetchone()
@@ -184,11 +184,11 @@ def nextMinutes():
 
 
 def nextMinutesInBusySeason(prevGrade):
-    cursor.execute("select kanaOrder_grade from members where grade = %s and onDuty_minutes = TRUE" % prevGrade)
+    cursor.execute("select kanaOrder_grade from members where grade = '%s' and onDuty_minutes = TRUE" % prevGrade)
     result = cursor.fetchone()
     order = int(result[0])
 
-    cursor.execute("select count(*) from members where grade = %s and kanaOrder_grade is not null" % prevGrade)
+    cursor.execute("select count(*) from members where grade = '%s' and kanaOrder_grade is not null" % prevGrade)
     rslt = cursor.fetchone()
     mem = int(rslt[0])
 
