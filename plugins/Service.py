@@ -229,6 +229,6 @@ def willTakeBehalfOf(message, *args):
     name = repo.presentMinutes()
     message.reply('次回の議事録当番は%sさんに変更しました。よろしくお願いします。' % name)
 
-@default_replay()
+@default_reply()
 def getSlackId(message, *args):
-    logger.logInfo(message.body['user'])
+    logger.logInfo(message.body['user'] + ' : ' + message.body['blocks'][0]['elements'][0]['elements'][0]['text'])
