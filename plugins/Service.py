@@ -1,5 +1,5 @@
 # coding: utf-8
-from slackbot.bot import respond_to
+from slackbot.bot import respond_to, default_reply
 import datetime
 from plugins import Repository as repo
 from logs import LogHandler as logger
