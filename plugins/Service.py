@@ -25,7 +25,7 @@ def sendTrashDuty2525AND2721(message, *args):
     message.send('次回のごみ捨て当番は\n2525室：%sさん\n2721室：%sさん\nです。' % (name2525, name2721))
 
 
-@respond_to(r'^(?=.*(ごみ|ゴミ|trash|garbage))(?=.*2525)')
+@respond_to(r'^(?=.*(ごみ|ゴミ|trash|garbage))(?!.*(終|代わ))(?=.*2525)')
 def sendTrashDutyIn2525(message, *args):
     """
     (ごみorゴミ)を含み、かつ部屋番号「2525」が含まれているメッセージに対し
@@ -43,7 +43,7 @@ def sendTrashDutyIn2525(message, *args):
     message.send('2525室の次回のごみ捨て当番は%sさんです。' % name)
 
 
-@respond_to(r'^(?=.*(ごみ|ゴミ|trash|garbage))(?=.*2721)')
+@respond_to(r'^(?=.*(ごみ|ゴミ|trash|garbage))(?!.*(終|代わ))(?=.*2721)')
 def sendTrashDutyIn2721(message, *args):
     """
     (ごみorゴミ)を含み,かつ部屋番号「2721」が含まれているメッセージに対し
@@ -164,10 +164,27 @@ def sendTodaysMinutesDuty(message, *args):
     message.send('本日の議事録当番は%sさんです。よろしくお願いします。' % name)
 
 
-@respond_to(r'^(?=.*(代理|代わ))(?=.*(ゴミ|ごみ))')
+@respond_to(r'^(?=.*(2525|2721))(?=.*(代理|代わ))(?=.*(ゴミ|ごみ))')
 def willDiscardBehalfOf(message, *args):
-    print(message.body)
-    message.reply('printed!!')
+    """
+    条件に合うメッセージに対し,
+    代理のごみ捨て当番を登録し,その内容をリプライする.
+
+    Args:
+        message (Message) : メッセージに関する情報を持ったクラスのインスタンス
+        args    (str)     : respond_to()内の正規表現にマッチしたメッセージ本文
+
+    Returns:
+        None
+    """
+
+    for arg in args:
+        print(arg)
+
+    room = "2721"
+    repo.trashDutyBehalfOf(room,message.body['user'])
+    name = repo.presentTrash(room)
+    message.reply('次回のごみ捨て当番は%sさんに変更しました。よろしくお願いします。' % name)
 
 
 @respond_to(r'^(?=.*(代理|代わ))(?=.*(議事録|議事))')
