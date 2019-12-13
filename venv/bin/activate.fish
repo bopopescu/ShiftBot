@@ -29,7 +29,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/yusuk/PycharmProjects/ShiftChecker/venv"
+set -gx VIRTUAL_ENV "/home/yusuk/app/ShiftBot/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
