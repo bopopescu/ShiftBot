@@ -144,7 +144,19 @@ def sendNextMinutesDuty(message, *args):
     """
 
     repo.doneMinutesDutyBehalfOf()
-    name = repo.nextMinutes()
+
+    wd = datetime.date.today().weekday()
+    hr = datetime.datetime.now().hour
+
+    if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
+        # 次回の定例会が水曜日のとき
+        name = repo.nextMinutesInBusySeason("m1")
+    else:
+        # 次回の定例会が月曜日のとき
+        name = repo.nextMinutesInBusySeason("b4")
+
+    # 通常時には以下を実行
+    # name = repo.nextMinutes()
     message.send('定例ミーティングお疲れさまです。\n次回の議事録当番は%sさんです。よろしくお願いします。' % name)
 
 
@@ -164,10 +176,17 @@ def sendTodaysMinutesDuty(message, *args):
         None
     """
 
-    for arg in args:
-        print(type(arg))
-        print(arg)
-    name = repo.presentMinutes()
+    wd = datetime.date.today().weekday()
+    hr = datetime.datetime.now().hour
+
+    if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
+        name = repo.presentMinutes("m1")
+    else:
+        name = repo.presentMinutes("b4")
+
+    # 通常時には以下を実行
+    # name = repo.presentMinutes()
+
     message.send('本日の議事録当番は%sさんです。よろしくお願いします。' % name)
 
 

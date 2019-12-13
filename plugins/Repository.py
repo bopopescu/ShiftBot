@@ -258,6 +258,8 @@ def doneMinutesDutyBehalfOf():
     try:
         cursor.execute("select name from members where behalf_minutes = TRUE")
         result = cursor.fetchone()
+        if result is None:
+            return
         name = result[0]
         cursor.execute("update members set behalf_minutes = FALSE where name = '%s'" % name)
         transaction.commit()
