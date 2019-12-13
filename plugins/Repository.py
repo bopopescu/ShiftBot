@@ -15,6 +15,7 @@ transaction = sql.connect(
     database=parser["sql"]["database"]
 )
 
+transaction.ping(reconnect=True)
 cursor = transaction.cursor()
 
 
@@ -24,10 +25,6 @@ def mod(num, size):
         return m
     else:
         return size
-
-
-def ping():
-    cursor.ping(reconnect=True)
 
 
 def presentTrash(room):
