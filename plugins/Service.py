@@ -1,6 +1,6 @@
 # coding: utf-8
 from slackbot.bot import respond_to
-
+import datetime
 from plugins import Repository as repo
 
 
@@ -75,7 +75,17 @@ def sendMinutesTaker(message, *args):
         None
     """
 
-    name = repo.presentMinutes()
+    wd = datetime.date.today().weekday()
+    hr = datetime.datetime.now().hour
+
+    if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
+        name = repo.presentMinutes("m1")
+    else:
+        name = repo.presentMinutes("b4")
+
+    # 通常時には以下を実行
+    # name = repo.presentMinutes()
+
     message.send('次回の議事録当番は%sさんです。' % name)
 
 
@@ -174,9 +184,6 @@ def willDiscardBehalfOf(message, *args):
     Returns:
         None
     """
-
-    for arg in args:
-        print(arg)
 
     room = "2721"
     repo.trashDutyBehalfOf(room,message.body['user'])

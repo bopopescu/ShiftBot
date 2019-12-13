@@ -75,7 +75,7 @@ def nextTrash(room):
     cursor.execute("select count(*) from members where room = %s and trashDuty_order is not NULL group by room" % room)
     result = cursor.fetchone()
     mem = int(result[0])
-    
+
     try:
         cursor.execute("update members set onDuty_trash = FALSE where room = '%s' and trashDuty_order = '%s'" % (room, order))
         transaction.commit()
@@ -108,10 +108,10 @@ def prevTrash(room):
     result = cursor.fetchone()
     order = int(result[0])
 
-    if room == "2525":
-        mem = 8
-    elif room == "2721":
-        mem = 5
+    cursor.execute("select count(*) from members where minutesDuty_order is not null")
+    rs = cursor.fetchone()
+    mem = int(rs[0])
+
     try:
         cursor.execute("update members set onDuty_trash = FALSE where room = '%s' and trashDuty_order = '%s'" % (room, order))
         cursor.execute("update members set onDuty_trash = TRUE where room = '%s' and trashDuty_order = '%s'" % (room, mod(order - 1, mem)))
@@ -123,7 +123,7 @@ def prevTrash(room):
         raise
 
 
-def presentMinutes():
+def presentMinutes(*grade):
     """ 次回の議事録当番の名前を返す.
 
     はじめに代理の議事録当番(behalf_minutesがTrue)が存在するか確認.
@@ -141,8 +141,10 @@ def presentMinutes():
         result = cursor.fetchone()
         pres = result[0]
     except Exception as e:
-        print(e)
-        cursor.execute("select name from members where onDuty_minutes = TRUE")
+        if grade is not None:
+            cursor.execute("select name from members where grade not in ('b3', grade) and onDuty_minutes = TRUE")
+        else:
+            cursor.execute("select name from members where onDuty_minutes = TRUE")
         result = cursor.fetchone()
         pres = result[0]
     return pres
@@ -174,6 +176,27 @@ def nextMinutes():
         cursor.execute("update members set onDuty_minutes= TRUE where minutesDuty_order = '%s'" % mod(order + 1, mem))
         transaction.commit()
         return presentMinutes()
+    except Exception as e:
+        transaction.rollback
+        tb = sys.exc_info()[2]
+        e.with_traceback(tb)
+        raise
+
+
+def nextMinutesInBusySeason(prevGrade):
+    cursor.execute("select kanaOrder_grade from members where grade = %s and onDuty_minutes = TRUE" % prevGrade)
+    result = cursor.fetchone()
+    order = int(result[0])
+
+    cursor.execute("select count(*) from members where grade = %s and kanaOrder_grade is not null" % prevGrade)
+    rslt = cursor.fetchone()
+    mem = int(rslt[0])
+
+    try:
+        cursor.execute("update members set onDuty_minutes = FALSE where kanaOrder_grade = '%s'" % order)
+        cursor.execute("update members set onDuty_minutes= TRUE where kanaOrder_grade = '%s'" % mod(order + 1, mem))
+        transaction.commit()
+        return presentMinutes(prevGrade)
     except Exception as e:
         transaction.rollback
         tb = sys.exc_info()[2]
