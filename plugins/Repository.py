@@ -46,6 +46,7 @@ def presentTrash(room):
     try:
         cursor.execute("select name from members where room = '%s' and behalf_trash = TRUE" % room)
         result = cursor.fetchone()
+        pres = None
         if result is not None:
             pres = result[0]
         else:
@@ -139,6 +140,7 @@ def presentMinutes(*grade):
     try:
         cursor.execute("select name from members where behalf_minutes = TRUE")
         result = cursor.fetchone()
+        pres = None
         if result is not None:
             pres = result[0]
         else:
