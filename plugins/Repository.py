@@ -68,7 +68,9 @@ def getNamebySlackID(slackID):
     try:
         cursor.execute("select name from members where SLID = '%s'" % slackID)
         result = cursor.fetchone()
-        return result[0]
+    except Exception as e:
+        logs.logException(e)
+    return result[0]
 
 
 def presentTrash(room):
