@@ -159,7 +159,7 @@ def sendNextTrashDuty(message, *args):
     #     return
 
     try:
-        repo.doneTrashDutyBehalfOf(2721)
+        repo.doneTrashDutyBehalfOf('2721')
         name2721 = repo.nextTrash('2721')
         message.send('ありがとうございます。2721室の次回のごみ捨て当番は%sさんです。よろしくお願いします。' % name2721)
     except Exception as e:
@@ -236,7 +236,7 @@ def sendTodaysMinutesDuty(message, *args):
         logger.logException(e)
 
 
-@respond_to(r'^(?=.*(2525|2721))(?=.*(代理|代わ))(?=.*(ゴミ|ごみ))')
+@respond_to(r'^(?=.*(代理|代わ))(?=.*(ゴミ|ごみ))')
 def willDiscardBehalfOf(message, *args):
     """
     条件に合うメッセージに対し,
@@ -251,9 +251,7 @@ def willDiscardBehalfOf(message, *args):
     """
 
     try:
-        room = "2721"
-        repo.trashDutyBehalfOf(room,message.body['user'])
-        name = repo.presentTrash(room)
+        name = repo.trashDutyBehalfOf(message.body['user'])
         message.reply('次回のごみ捨て当番は%sさんに変更しました。よろしくお願いします。' % name)
     except Exception as e:
         message.reply("申し訳ありません.内部エラーが発生したようです.")

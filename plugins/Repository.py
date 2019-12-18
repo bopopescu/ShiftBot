@@ -64,6 +64,13 @@ def getSlackIDofTrashDuty(room):
     return pres        
 
 
+def getNamebySlackID(slackID):
+    try:
+        cursor.execute("select name from members where SLID = '%s'" % slackID)
+        result = cursor.fetchone()
+        return result[0]
+
+
 def presentTrash(room):
     """ 部屋番号を引数として受け取り,次回のゴミ捨て当番の名前を返す.
 
@@ -246,20 +253,19 @@ def nextMinutesInBusySeason(prevGrade):
         logs.logException(e)
 
 
-def trashDutyBehalfOf(room, name):
+def trashDutyBehalfOf(slackID):
     """
     動作確認：未
     """
 
     try:
-        duty = presentTrash(room)
-        cursor.execute("update members set behalf_trash = TRUE where name = '%s'" % name)
+        cursor.execute("update members set behalf_trash = TRUE where SLID = '%s'" % slackID)
     except Exception as e:
         transaction.rollback()
         logs.logException(e)
     else:
         transaction.commit()
-    return duty
+    return getNamebySlackID(slackID)
 
 
 def minutesDutyBehalfOf(slkid):
