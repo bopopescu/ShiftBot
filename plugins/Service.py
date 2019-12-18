@@ -111,6 +111,7 @@ def sendNextTrashDutyBySlackID(message, *args):
     nextDuty = repo.nextTrashbyID(message.body['user'])
     message.reply('ありがとうございます。%s室の次回のごみ捨て当番は%sさんです。よろしくお願いします。' % nextDuty)
 
+
 @respond_to(r'^(?=.*(ごみ|ゴミ))(?=.*終)(?=.*2525)')
 def sendNextTrashDutyIn2525(message, *args):
     """
@@ -125,12 +126,13 @@ def sendNextTrashDutyIn2525(message, *args):
         None
     """
 
-    presID = repo.getSlackIDofTrashDuty('2525')
-    if presID != message.body['user']:
-        message.reply('ごみ捨てを担当した本人が送信してください...')
-        return
+    # presID = repo.getSlackIDofTrashDuty('2525')
+    # if presID != message.body['user']:
+    #     message.reply('ごみ捨てを担当した本人が送信してください...')
+    #     return
 
     try:
+        repo.doneTrashDutyBehalfOf('2525')
         name2525 = repo.nextTrash('2525')
         message.send('ありがとうございます。2525室の次回のごみ捨て当番は%sさんです。よろしくお願いします。' % name2525)
     except Exception as e:
@@ -151,11 +153,13 @@ def sendNextTrashDuty(message, *args):
         None
     """
 
-    presID = repo.getSlackIDofTrashDuty('2721')
-    if presID != message.body['user']:
-        message.reply('ごみ捨てを担当した本人が送信してください...')
-        return
+    # presID = repo.getSlackIDofTrashDuty('2721')
+    # if presID != message.body['user']:
+    #     message.reply('ごみ捨てを担当した本人が送信してください...')
+    #     return
+
     try:
+        repo.doneTrashDutyBehalfOf(2721)
         name2721 = repo.nextTrash('2721')
         message.send('ありがとうございます。2721室の次回のごみ捨て当番は%sさんです。よろしくお願いします。' % name2721)
     except Exception as e:

@@ -97,7 +97,9 @@ def nextTrashbyID(slackID):
     cursor.execute("select room from members where SLID = '%s'" % slackID)
     result = cursor.fetchone()
     room = result[0]
+    doneTrashDutyBehalfOf(room)
     return (room, nextTrash(room))
+
 
 def nextTrash(room):
     """ 部屋番号を引数として受け取りごみ捨て当番を更新した後,次回のゴミ捨て当番の名前を返す.
@@ -283,13 +285,13 @@ def minutesDutyBehalfOf(slkid):
     return presentMinutes()
 
 
-def doneTrashDutyBehalfOf():
+def doneTrashDutyBehalfOf(room):
     """
     動作確認：未
     """
 
     try:
-        cursor.excute("select name from members where behalf_trash = TRUE")
+        cursor.excute("select name from members where room = '%s' and behalf_trash = TRUE" % room)
         result = cursor.fetchone()
         name = result[0]
         cursor.execute("update members set behalf_trash = FALSE where name = '%s'" % name)
