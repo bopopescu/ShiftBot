@@ -16,9 +16,9 @@ API_TOKEN = conf['slack']['BOT_USER_OAUTH_ACCESS_TOKEN']
 
 def main():
     cl = client(API_TOKEN)
-    schedule.every().monday.at('10:00').do(dm.sendReminder4MinutesDuty, cl, 'b4')
-    schedule.every().wednesday.at('18:00').do(dm.sendReminder4TrashDuty, cl)
-    schedule.every().wednesday.at('10:00').do(dm.sendReminder4MinutesDuty, cl, 'm1')
+    # schedule.every().monday.at('10:00').do(dm.sendReminder4MinutesDuty, cl, 'b4')
+    # schedule.every().wednesday.at('18:00').do(dm.sendReminder4TrashDuty, cl)
+    # schedule.every().wednesday.at('10:00').do(dm.sendReminder4MinutesDuty, cl, 'm1')
 
     while True:
         schedule.run_pending()
