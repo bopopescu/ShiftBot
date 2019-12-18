@@ -291,7 +291,7 @@ def doneTrashDutyBehalfOf(room):
     """
 
     try:
-        cursor.excute("select name from members where room = '%s' and behalf_trash = TRUE" % room)
+        cursor.execute("select name from members where room = '%s' and behalf_trash = TRUE" % room)
         result = cursor.fetchone()
         name = result[0]
         cursor.execute("update members set behalf_trash = FALSE where name = '%s'" % name)
