@@ -1,5 +1,8 @@
 .DS_Store
 .idea
+.vscode
 *.ini
+templates
+__pycache__
 
 ExtraCommands.py

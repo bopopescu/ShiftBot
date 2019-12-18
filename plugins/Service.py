@@ -21,9 +21,13 @@ def sendTrashDuty2525AND2721(message, *args):
 
     """
 
-    name2525 = repo.presentTrash('2525')
-    name2721 = repo.presentTrash('2721')
-    message.send('次回のごみ捨て当番は\n2525室：%sさん\n2721室：%sさん\nです。' % (name2525, name2721))
+    try:
+        name2525 = repo.presentTrash('2525')
+        name2721 = repo.presentTrash('2721')
+        message.send('次回のごみ捨て当番は\n2525室：%sさん\n2721室：%sさん\nです。' % (name2525, name2721))
+    except Exception as e:
+        message.reply("申し訳ありません.内部エラーが発生したようです.")
+        logger.logException(e)
 
 
 @respond_to(r'^(?=.*(ごみ|ゴミ|trash|garbage))(?!.*(終|代わ))(?=.*2525)')
@@ -40,8 +44,12 @@ def sendTrashDutyIn2525(message, *args):
         None
     """
 
-    name = repo.presentTrash('2525')
-    message.send('2525室の次回のごみ捨て当番は%sさんです。' % name)
+    try:
+        name = repo.presentTrash('2525')
+        message.send('2525室の次回のごみ捨て当番は%sさんです。' % name)
+    except Exception as e:
+        message.reply("申し訳ありません.内部エラーが発生したようです.")
+        logger.logException(e)
 
 
 @respond_to(r'^(?=.*(ごみ|ゴミ|trash|garbage))(?!.*(終|代わ))(?=.*2721)')
@@ -58,8 +66,12 @@ def sendTrashDutyIn2721(message, *args):
         None
     """
 
-    name = repo.presentTrash('2721')
-    message.send('2721室の次回のごみ捨て当番は%sさんです。' % name)
+    try:
+        name = repo.presentTrash('2721')
+        message.send('2721室の次回のごみ捨て当番は%sさんです。' % name)
+    except Exception as e:
+        message.reply("申し訳ありません.内部エラーが発生したようです.")
+        logger.logException(e)
 
 
 @respond_to(r'^(?=.*(議事録|議事))(?!.*(終|今日|代わ))')
@@ -76,19 +88,28 @@ def sendMinutesTaker(message, *args):
         None
     """
 
-    wd = datetime.date.today().weekday()
-    hr = datetime.datetime.now().hour
+    try:
+        wd = datetime.date.today().weekday()
+        hr = datetime.datetime.now().hour
 
-    if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
-        name = repo.presentMinutes("m1")
-    else:
-        name = repo.presentMinutes("b4")
+        if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
+            name = repo.presentMinutes("m1")
+        else:
+            name = repo.presentMinutes("b4")
 
-    # 通常時には以下を実行
-    # name = repo.presentMinutes()
+        # 通常時には以下を実行
+        # name = repo.presentMinutes()
 
-    message.send('次回の議事録当番は%sさんです。' % name)
+        message.send('次回の議事録当番は%sさんです。' % name)
+    except Exception as e:
+        message.reply("申し訳ありません.内部エラーが発生したようです.")
+        logger.logException(e)
 
+
+@respond_to(r'^(?=.*(ごみ|ゴミ))(?=.*終)')
+def sendNextTrashDutyBySlackID(message, *args):
+    nextDuty = repo.nextTrashbyID(message.body['user'])
+    message.reply('ありがとうございます。%s室の次回のごみ捨て当番は%sさんです。よろしくお願いします。' % nextDuty)
 
 @respond_to(r'^(?=.*(ごみ|ゴミ))(?=.*終)(?=.*2525)')
 def sendNextTrashDutyIn2525(message, *args):
@@ -104,12 +125,17 @@ def sendNextTrashDutyIn2525(message, *args):
         None
     """
 
-    for arg in args:
-        print(type(arg))
-        print(arg)  # 議事or議事録しか拾えない(search:肯定先読み)
-    name2525 = repo.nextTrash('2525')
-    message.send('ありがとうございます。2525室の次回のごみ捨て当番は%sさんです。よろしくお願いします。' % name2525)
+    presID = repo.getSlackIDofTrashDuty('2525')
+    if presID != message.body['user']:
+        message.reply('ごみ捨てを担当した本人が送信してください...')
+        return
 
+    try:
+        name2525 = repo.nextTrash('2525')
+        message.send('ありがとうございます。2525室の次回のごみ捨て当番は%sさんです。よろしくお願いします。' % name2525)
+    except Exception as e:
+        message.reply("申し訳ありません.内部エラーが発生したようです.")
+        logger.logException(e)
 
 @respond_to(r'^(?=.*(ごみ|ゴミ))(?=.*終)(?=.*2721)')
 def sendNextTrashDuty(message, *args):
@@ -125,9 +151,16 @@ def sendNextTrashDuty(message, *args):
         None
     """
 
-    name2721 = repo.nextTrash('2721')
-    message.send('ありがとうございます。2721室の次回のごみ捨て当番は%sさんです。よろしくお願いします。' % name2721)
-
+    presID = repo.getSlackIDofTrashDuty('2721')
+    if presID != message.body['user']:
+        message.reply('ごみ捨てを担当した本人が送信してください...')
+        return
+    try:
+        name2721 = repo.nextTrash('2721')
+        message.send('ありがとうございます。2721室の次回のごみ捨て当番は%sさんです。よろしくお願いします。' % name2721)
+    except Exception as e:
+        message.reply("申し訳ありません.内部エラーが発生したようです.")
+        logger.logException(e)
 
 @respond_to(r'^(?=.*(議事録|議事|ミーティング|mtg))(?=.*終)')
 def sendNextMinutesDuty(message, *args):
@@ -144,21 +177,25 @@ def sendNextMinutesDuty(message, *args):
         None
     """
 
-    repo.doneMinutesDutyBehalfOf()
+    try:
+        repo.doneMinutesDutyBehalfOf()
 
-    wd = datetime.date.today().weekday()
-    hr = datetime.datetime.now().hour
+        wd = datetime.date.today().weekday()
+        hr = datetime.datetime.now().hour
 
-    if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
-        # 次回の定例会が水曜日のとき
-        name = repo.nextMinutesInBusySeason("m1")
-    else:
-        # 次回の定例会が月曜日のとき
-        name = repo.nextMinutesInBusySeason("b4")
+        if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
+            # 次回の定例会が水曜日のとき
+            name = repo.nextMinutesInBusySeason("m1")
+        else:
+            # 次回の定例会が月曜日のとき
+            name = repo.nextMinutesInBusySeason("b4")
 
-    # 通常時には以下を実行
-    # name = repo.nextMinutes()
-    message.send('定例ミーティングお疲れさまです。\n次回の議事録当番は%sさんです。よろしくお願いします。' % name)
+        # 通常時には以下を実行
+        # name = repo.nextMinutes()
+        message.send('定例ミーティングお疲れさまです。\n次回の議事録当番は%sさんです。よろしくお願いします。' % name)
+    except Exception as e:
+        message.reply("申し訳ありません.内部エラーが発生したようです.")
+        logger.logException(e)
 
 
 # TODO Googleカレンダーと連携
@@ -177,18 +214,22 @@ def sendTodaysMinutesDuty(message, *args):
         None
     """
 
-    wd = datetime.date.today().weekday()
-    hr = datetime.datetime.now().hour
+    try:
+        wd = datetime.date.today().weekday()
+        hr = datetime.datetime.now().hour
 
-    if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
-        name = repo.presentMinutes("m1")
-    else:
-        name = repo.presentMinutes("b4")
+        if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
+            name = repo.presentMinutes("m1")
+        else:
+            name = repo.presentMinutes("b4")
 
-    # 通常時には以下を実行
-    # name = repo.presentMinutes()
+        # 通常時には以下を実行
+        # name = repo.presentMinutes()
 
-    message.send('本日の議事録当番は%sさんです。よろしくお願いします。' % name)
+        message.send('本日の議事録当番は%sさんです。よろしくお願いします。' % name)
+    except Exception as e:
+        message.reply("申し訳ありません.内部エラーが発生したようです.")
+        logger.logException(e)
 
 
 @respond_to(r'^(?=.*(2525|2721))(?=.*(代理|代わ))(?=.*(ゴミ|ごみ))')
@@ -205,10 +246,14 @@ def willDiscardBehalfOf(message, *args):
         None
     """
 
-    room = "2721"
-    repo.trashDutyBehalfOf(room,message.body['user'])
-    name = repo.presentTrash(room)
-    message.reply('次回のごみ捨て当番は%sさんに変更しました。よろしくお願いします。' % name)
+    try:
+        room = "2721"
+        repo.trashDutyBehalfOf(room,message.body['user'])
+        name = repo.presentTrash(room)
+        message.reply('次回のごみ捨て当番は%sさんに変更しました。よろしくお願いします。' % name)
+    except Exception as e:
+        message.reply("申し訳ありません.内部エラーが発生したようです.")
+        logger.logException(e)
 
 
 @respond_to(r'^(?=.*(代理|代わ))(?=.*(議事録|議事))')
@@ -225,13 +270,17 @@ def willTakeBehalfOf(message, *args):
         None
     """
 
-    repo.minutesDutyBehalfOf(message.body['user'])
-    name = repo.presentMinutes()
-    message.reply('次回の議事録当番は%sさんに変更しました。よろしくお願いします。' % name)
+    try:
+        repo.minutesDutyBehalfOf(message.body['user'])
+        name = repo.presentMinutes()
+        message.reply('次回の議事録当番は%sさんに変更しました。よろしくお願いします。' % name)
+    except Exception as e:
+        message.reply("申し訳ありません.内部エラーが発生したようです.")
+        logger.logException(e)
 
 
 @default_reply()
 def getSlackId(message, *args):
     for arg in args:
         logger.logInfo(message.body['user'] + ' : ' + arg)
-    message.reply('''「ごみ」を含む文章：\n\t→次回の両室のゴミ当番\n「ごみ」と「部屋番号(半角)」を含む文章：\n\t→該当部屋の次回のごみ捨て当番\n「ごみ」と「終」を含む文章：\n\t→次回のゴミ捨て当番が更新されるのでごみ捨てを行った人が送信してください。\n「議事(録)」を含む文章：\n\t→次回の議事録当番\n「議事(録)」と「終」を含む文章：\n\t→次回の議事録当番が更新されるので議事録当番を行った人が送信してください。''')
+    message.reply('「ごみ」を含む文章：\n\t→次回の両室のゴミ当番\n「ごみ」と「部屋番号(半角)」を含む文章：\n\t→該当部屋の次回のごみ捨て当番\n「ごみ」と「終」を含む文章：\n\t→次回のゴミ捨て当番が更新されるのでごみ捨てを行った人が送信してください。\n「議事(録)」を含む文章：\n\t→次回の議事録当番\n「議事(録)」と「終」を含む文章：\n\t→次回の議事録当番が更新されるので議事録当番を行った人が送信してください。')
