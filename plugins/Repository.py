@@ -140,17 +140,14 @@ def presentMinutes(*grade):
     try:
         cursor.execute("select name from members where behalf_minutes = TRUE")
         result = cursor.fetchone()
-        pres = None
-        if result is not None:
-            pres = result[0]
-        else:
-            if grade is not None:
-                cursor.execute("select name from members where grade not in ('b3', '%s') and onDuty_minutes = TRUE" % grade)
-            else:
-                cursor.execute("select name from members where onDuty_minutes = TRUE")
-            result = cursor.fetchone()
-            pres = result[0]
+        pres = result[0]
     except Exception as e:
+        if grade is not None:
+            cursor.execute("select name from members where grade not in ('b3', '%s') and onDuty_minutes = TRUE" % grade)
+        else:
+            cursor.execute("select name from members where onDuty_minutes = TRUE")
+        result = cursor.fetchone()
+        pres = result[0]
         logs.logException(e)
     return pres
 
