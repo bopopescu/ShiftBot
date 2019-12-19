@@ -30,6 +30,7 @@ def mod(num, size):
 
 
 def getSlackIDofMinutesDuty(*grade):
+    pres = None
     try:
         cursor.execute("select SLID from members where behalf_minutes = TRUE")
         result = cursor.fetchone()
@@ -49,10 +50,10 @@ def getSlackIDofMinutesDuty(*grade):
 
 
 def getSlackIDofTrashDuty(room):
+    pres = None
     try:
         cursor.execute("select SLID from members where room = '%s' and behalf_trash = TRUE" % room)
         result = cursor.fetchone()
-        pres = None
         if result is not None:
             pres = result[0]
         else:
@@ -86,11 +87,11 @@ def presentTrash(room):
 
     Returns:
         pres    (str) : 次回のごみ捨て当番者の名前(名字)
-    """
+    """    
+    pres = None
     try:
         cursor.execute("select name from members where room = '%s' and behalf_trash = TRUE" % room)
         result = cursor.fetchone()
-        pres = None
         if result is not None:
             pres = result[0]
         else:
@@ -189,6 +190,7 @@ def presentMinutes(*grade):
         pres    (str) : 次回の議事録当番者の名前(名字)
     """
 
+    pres = None
     try:
         cursor.execute("select name from members where behalf_minutes = TRUE")
         result = cursor.fetchone()
