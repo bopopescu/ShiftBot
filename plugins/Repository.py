@@ -92,12 +92,11 @@ def presentTrash(room):
     try:
         cursor.execute("select name from members where room = '%s' and behalf_trash = TRUE" % room)
         result = cursor.fetchone()
-        if result is not None:
-            pres = result[0]
-        else:
-            cursor.execute("select name from members where room = '%s' and onDuty_trash = TRUE" % room)
-            result = cursor.fetchone()
-            pres = result[0]
+        pres = result[0]
+    except TypeError as te:
+        cursor.execute("select name from members where room = '%s' and onDuty_trash = TRUE" % room)
+        result = cursor.fetchone()
+        pres = result[0]
     except Exception as e:
         logs.logException(e)
     return pres
@@ -322,10 +321,10 @@ def doneMinutesDutyBehalfOf():
     try:
         cursor.execute("select name from members where behalf_minutes = TRUE")
         result = cursor.fetchone()
-        if result is None:
-            return
         name = result[0]
         cursor.execute("update members set behalf_minutes = FALSE where name = '%s'" % name)
+    except TabError as te:
+        return
     except Exception as e:
         transaction.rollback()
         logs.logException(e)
