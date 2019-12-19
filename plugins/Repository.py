@@ -104,7 +104,7 @@ def presentTrash(room):
 
 
 def nextTrashbyID(slackID):
-    cursor.execute("select room from members where SLID = '%s'" % slackID)
+    cursor.execute("select room from members where SLID = %s" % slackID)
     result = cursor.fetchone()
     room = result[0]
     doneTrashDutyBehalfOf(room)
