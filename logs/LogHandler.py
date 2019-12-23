@@ -1,28 +1,37 @@
 import logging
 from logging import getLogger, StreamHandler, Formatter, FileHandler
 
-logger = getLogger("ShiftBotLog")
+sep = '########################'
 
-# ハンドラに渡すエラーメッセージのレベル
-logger.setLevel(logging.INFO)
+class LoggingFilter(level):
+    def __init__(self, level):
+        self.__level = level
+    
+    def filter(self, record):
+        return record.levelno <= self.__level
 
-logHandler = StreamHandler()
-logfileHandler = FileHandler(filename="ShiftBotLog.log", mode="a")
 
-# ハンドラが出力するエラーメッセージのレベル
-logHandler.setLevel(logging.DEBUG)
-logfileHandler.setLevel(logging.INFO)
+logger = getLogger(__name__)
 
-# ログ出力のフォーマット設定
-logFormat = Formatter("%(asctime)s - %(name)s\n\t%(levelname)s - %(message)s")
-logHandler.setFormatter(logFormat)
-logfileHandler.setFormatter(logFormat)
 
-logger.addHandler(logHandler)
-logger.addHandler(logfileHandler)
+def setLogHandler(level, filename):
+    logFormat = logging.Formatter(sep+'\n%(asctime)s\n\t%(levelname)s - %(message)s\n')
+    handler = logging.FileHandler(filename)
+    handler.setLevel(level)
+    handler.setFormatter(logFormat)
+    handler.addFilter(LoggingFilter(level))
+    logger.addHandler(handler)
+
+logger.setLevel(logging.DEBUG)
+setLogHandler(logging.INFO, './info.log')
+setLogHandler(logging.WARNING, './warning.log')
+setLogHandler(logging.ERROR, './error.log')
 
 def logInfo(text):
     logger.info(text)
+
+def logWarning(text):
+    logger.warn(text)
 
 def logException(text):
     logger.exception(text)
