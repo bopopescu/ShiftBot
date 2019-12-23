@@ -20,9 +20,9 @@ def main():
 
 
 def sendingSchedule():
-    # schedule.every().monday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'b4')
-    # schedule.every().thursday.at('11:00').do(dm.sendReminder4TodaysTrashDuty, API_TOKEN)
-    # schedule.every().wednesday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'm1')
+    schedule.every().monday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'b4')
+    schedule.every().thursday.at('11:00').do(dm.sendReminder4TodaysTrashDuty, API_TOKEN)
+    schedule.every().wednesday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'm1')
     
     while True:
         schedule.run_pending()
@@ -32,4 +32,4 @@ def sendingSchedule():
 if __name__ == '__main__':
     print('Start slackBot')
     multiprocessing.Process(target=main).start()
-    multiprocessing.Process(target=sendingSchedule).start()
+    # multiprocessing.Process(target=sendingSchedule).start()
