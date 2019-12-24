@@ -10,28 +10,28 @@ sep = '########################'
     # def filter(self, record):
     #     return record.levelno <= self.__level
 
+logger = getLogger(__name__)
+logger.setLevel(logging.INFO)
 
-# logger = getLogger(__name__)
-
+logFormat = logging.Formatter(sep+'\n%(asctime)s\n\t%(levelname)s - %(message)s\n')
 
 def setLogHandler(level, filename):
-    logFormat = logging.Formatter(sep+'\n%(asctime)s\n\t%(levelname)s - %(message)s\n')
     handler = logging.FileHandler(filename)
     handler.setLevel(level)
     handler.setFormatter(logFormat)
-    # handler.addFilter(LoggingFilter(level))
-    # logger.addHandler(handler)
+    logger.addHandler(handler)
 
-# logger.setLevel(logging.DEBUG)
-setLogHandler(logging.INFO, './info.log')
-setLogHandler(logging.WARNING, './warning.log')
+
 setLogHandler(logging.ERROR, './error.log')
+setLogHandler(logging.WARNING, './warning.log')
+setLogHandler(logging.INFO, './info.log')
 
-# def logInfo(text):
-#     logger.info(text)
 
-# def logWarning(text):
-#     logger.warn(text)
+def logInfo(text):
+    logger.info(text)
 
-# def logException(text):
-#     logger.exception(text)
+def logWarning(text):
+    logger.warn(text)
+
+def logException(text):
+    logger.exception(text)
