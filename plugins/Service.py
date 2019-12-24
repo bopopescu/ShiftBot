@@ -99,7 +99,7 @@ def sendMinutesTaker(message, *args):
         #     name = repo.presentMinutes("b4")
 
         # 2019年度冬休み期間
-        name = repo.presentMinutes('m1')
+        name = repo.presentMinutes('b4')
 
         # 通常時には以下を実行
         # name = repo.presentMinutes()
