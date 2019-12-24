@@ -89,13 +89,17 @@ def sendMinutesTaker(message, *args):
     """
 
     try:
-        wd = datetime.date.today().weekday()
-        hr = datetime.datetime.now().hour
+        # 卒論対応時期
+        # wd = datetime.date.today().weekday()
+        # hr = datetime.datetime.now().hour
+        # 
+        # if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
+        #     name = repo.presentMinutes("m1")
+        # else:
+        #     name = repo.presentMinutes("b4")
 
-        if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
-            name = repo.presentMinutes("m1")
-        else:
-            name = repo.presentMinutes("b4")
+        # 2019年度冬休み期間
+        name = repo.presentMinutes('m1')
 
         # 通常時には以下を実行
         # name = repo.presentMinutes()
@@ -285,4 +289,4 @@ def willTakeBehalfOf(message, *args):
 def getSlackId(message, *args):
     for arg in args:
         logger.logInfo(message.body['user'] + ' : ' + arg)
-    message.reply('「ごみ」を含む文章：\n\t→次回の両室のゴミ当番\n「ごみ」と「部屋番号(半角)」を含む文章：\n\t→該当部屋の次回のごみ捨て当番\n「ごみ」と「終」を含む文章：\n\t→次回のゴミ捨て当番が更新されるのでごみ捨てを行った人が送信してください。\n「議事(録)」を含む文章：\n\t→次回の議事録当番\n「議事(録)」と「終」を含む文章：\n\t→次回の議事録当番が更新されるので議事録当番を行った人が送信してください。')
+    message.reply('「ごみ」を含む文章：\n\t→次回の両室のゴミ当番\n「ごみ」と「部屋番号(半角)」を含む文章：\n\t→該当部屋の次回のごみ捨て当番\n「ごみ」と「終」を含む文章：\n\t→次回のゴミ捨て当番が更新されるのでごみ捨てを行った人が送信してください。\n「議事(録)」を含む文章：\n\t→次回の議事録当番\n「議事(録)」と「終」を含む文章：\n\t→次回の議事録当番が更新されるので議事録当番を行った人が送信してください。\n「代理」と代理を登録したい当番を含む文章：\n\t→次回の当番をこのメッセージを送信した人に変更します。')
