@@ -90,16 +90,16 @@ def sendMinutesTaker(message, *args):
 
     try:
         # 卒論対応時期
-        # wd = datetime.date.today().weekday()
-        # hr = datetime.datetime.now().hour
-        # 
-        # if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
-        #     name = repo.presentMinutes("m1")
-        # else:
-        #     name = repo.presentMinutes("b4")
+        wd = datetime.date.today().weekday()
+        hr = datetime.datetime.now().hour
+        
+        if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
+            name = repo.presentMinutes("m1")
+        else:
+            name = repo.presentMinutes("b4")
 
-        # 2019年度冬休み期間
-        name = repo.presentMinutes('b4')
+        # 休み期間
+        # name = repo.presentMinutes('b4')
 
         # 通常時には以下を実行
         # name = repo.presentMinutes()

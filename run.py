@@ -2,6 +2,7 @@ from slackbot.bot import Bot
 from slackbot.slackclient import SlackClient as client
 
 from plugins import DMHandler as dm
+from plugins import Repository as repo
 import configparser
 import sys
 import schedule
@@ -20,10 +21,10 @@ def main():
 
 
 def sendingSchedule():
-    schedule.every().monday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'b4')
-    schedule.every().thursday.at('11:00').do(dm.sendReminder4TodaysTrashDuty, API_TOKEN)
-    schedule.every().wednesday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'm1')
-    
+    # schedule.every().monday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'b4')
+    # schedule.every().thursday.at('11:00').do(dm.sendReminder4TodaysTrashDuty, API_TOKEN)
+    # schedule.every().wednesday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'm1')
+    schedule.every().hour(8).do(repo.ping)
     while True:
         schedule.run_pending()
         time.sleep(1)
