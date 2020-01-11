@@ -25,8 +25,7 @@ def mod(num, size):
         return size
 
 def ping():
-    cursor = transaction.cursor()
-    cursor.close()
+    transaction.ping(reconnect=True)
 
 def getSlackIDofMinutesDuty(*grade):
     cursor = transaction.cursor()
