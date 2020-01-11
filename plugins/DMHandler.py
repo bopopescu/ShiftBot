@@ -1,6 +1,7 @@
 from slackbot.slackclient import SlackClient as client
 
 from plugins import Repository as repo
+from logs import LogHandler as log
 
 attempt = 'ULMK1UHJS'
 
@@ -12,6 +13,7 @@ def sendReminder4TrashDuty(token):
     client.send_message(self=sc, channel=attempt, message=text)
     # client.send_message(self=sc, channel=id2525, message=text)
     # client.send_message(self=sc, channel=id2721, message=text)
+    log.logInfo('Send message(' + text + ') to' + id2525 +' and ' + id2721)
 
 
 def sendReminder4TodaysTrashDuty(token):
@@ -22,6 +24,7 @@ def sendReminder4TodaysTrashDuty(token):
     client.send_message(self=sc, channel=attempt, message=text)
     # client.send_message(self=sc, channel=id2525, message=text)
     # client.send_message(self=sc, channel=id2721, message=text)
+    log.logInfo('Send message(' + text + ') to' + id2525 +' and ' + id2721)
 
 
 def sendReminder4MinutesDuty(token, *grade):
@@ -30,3 +33,4 @@ def sendReminder4MinutesDuty(token, *grade):
     userid = repo.getSlackIDofMinutesDuty(grade)
     client.send_message(self=sc, channel=attempt, message=text)
     # client.send_message(self=sc, channel=userid, message=text)
+    log.logInfo('Send message(' + text + ') to' + userid)
