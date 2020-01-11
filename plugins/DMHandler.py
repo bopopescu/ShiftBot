@@ -5,6 +5,10 @@ from logs import LogHandler as log
 
 attempt = 'ULMK1UHJS'
 
+def sendDMTest(token, text):
+    sc = client(token)
+    client.send_message(self=sc, channel=attempt, message=text)
+
 def sendReminder4TrashDuty(token):
     sc = client(token)
     text = '明日のごみ捨て当番です. よろしくお願いします. '
