@@ -17,13 +17,13 @@ class Member:
 
 class CircularLinkedList:
 
-    def __init__(self, job=None): 
+    def __init__(self, job=None):
+        self.head = None
+
         if job == 'minutes':
             idList = repo.getSlackIDList4MinutesOrder()
             for r in idList:
-                minutes.push(r[0])
-        else:
-            self.head = None
+                self.push(r[0])
   
     def push(self, data): 
         ptr1 = Node(data) 
@@ -61,7 +61,7 @@ class CircularLinkedList:
         temp = self.head 
         if self.head is not None: 
             while(True): 
-                print "%d" %(temp.data), 
+                print ("%s" % (temp.data)) 
                 temp = temp.next
                 if (temp == self.head): 
                     break

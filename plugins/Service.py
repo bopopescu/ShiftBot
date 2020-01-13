@@ -2,11 +2,11 @@
 from slackbot.bot import respond_to, default_reply, listen_to
 import datetime
 from plugins import Repository as repo
-from plugins import CircularLinkedList
+from plugins.CircularLinkedList import CircularLinkedList
 from logs import LogHandler as logger
 
 @respond_to('circular test')
-def circularTest():
+def circularTest(*args):
     members = CircularLinkedList('minutes')
     members.printList()
 
