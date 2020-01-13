@@ -27,6 +27,13 @@ def mod(num, size):
 def ping():
     transaction.ping(reconnect=True)
 
+def getSlackIDList4MinutesOrder():
+    cursor = transaction.cursor()
+    try:
+        cursor.execute("select SLID from members where minutesDuty_order is not null order by minutesDuty_order desc")
+        result = cursor.fetchall()
+        return result
+
 def getSlackIDofMinutesDuty(*grade):
     cursor = transaction.cursor()
     try:
@@ -258,6 +265,40 @@ def nextMinutesInBusySeason(prevGrade):
     cursor.execute("select kanaOrder_grade from members where grade = '%s' and onDuty_minutes = TRUE" % prevGrade)
     result = cursor.fetchone()
     order = int(result[0])
+
+    cursor.execute("select count(*) from members where grade = '%s' and kanaOrder_grade is not null" % prevGrade)
+    rslt = cursor.fetchone()
+    mem = int(rslt[0])
+
+    try:
+        cursor.execute("update members set onDuty_minutes = FALSE where kanaOrder_grade = '%s'" % order)
+        cursor.execute("update members set onDuty_minutes= TRUE where kanaOrder_grade = '%s'" % mod(order + 1, mem))
+        transaction.commit()
+        return presentMinutes(prevGrade)
+    except Exception as e:
+        transaction.rollback()
+        logs.logException(e)
+    finally:
+        cursor.close()
+
+
+def nextMinutesInBusySeasonWithB3(prevGrade):
+    cursor = transaction.cursor()
+    try:
+        cursor.execute("select name, grade from members where done = FALSE and minutesDuty_order is not null order by minutesDuty_order")
+        result = cursor.fetchone()
+    except TypeError as te:
+        cursor.execute("update members set done = FALSE")
+        cursor.execute("select name, grade from members where done = FALSE and minutesDuty_order is not null order by minutesDuty_order")
+        result = cursor.fetchone()
+    finally:
+        name = result[0]
+        grade = int(result[1])
+
+    if grade != prevGrade:
+        cursor.execute("update members set onDuty_minutes = FALSE where onDuty_minutes = TRUE")
+        cursor.execute("update members set onDuty_minutes = TRUE where name = '%s'" % name)
+        return name
 
     cursor.execute("select count(*) from members where grade = '%s' and kanaOrder_grade is not null" % prevGrade)
     rslt = cursor.fetchone()

@@ -24,8 +24,8 @@ def sendingSchedule():
     # schedule.every().monday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'b4')
     # schedule.every().thursday.at('11:00').do(dm.sendReminder4TodaysTrashDuty, API_TOKEN)
     # schedule.every().wednesday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'm1')
-    schedule.every(6).hour().do(repo.ping)
-    schedule.every(1).hour().do(API_TOKEN, 'テスト成功')
+    schedule.every(6).hours().do(repo.ping)
+    schedule.every(1).hours().do(API_TOKEN, 'テスト成功')
     while True:
         schedule.run_pending()
         time.sleep(1)
