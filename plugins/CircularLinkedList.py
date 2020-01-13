@@ -18,7 +18,7 @@ class Member:
 class CircularLinkedList:
 
     def __init__(self, job=None): 
-        if job == 'minutes'
+        if job == 'minutes':
             idList = repo.getSlackIDList4MinutesOrder()
             for r in idList:
                 minutes.push(r[0])
