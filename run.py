@@ -34,4 +34,4 @@ def sendingSchedule():
 if __name__ == '__main__':
     print('Start slackBot')
     multiprocessing.Process(target=main).start()
-    # multiprocessing.Process(target=sendingSchedule).start()
+    multiprocessing.Process(target=sendingSchedule).start()
