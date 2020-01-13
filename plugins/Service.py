@@ -2,8 +2,13 @@
 from slackbot.bot import respond_to, default_reply, listen_to
 import datetime
 from plugins import Repository as repo
+from plugins import CircularLinkedList
 from logs import LogHandler as logger
 
+@respond_to('circular test')
+def circularTest():
+    members = CircularLinkedList('minutes')
+    members.printList()
 
 @respond_to(r'^(?=.*(ごみ|ゴミ))(?!.*(2525|2721|終|代わ))')
 def sendTrashDuty2525AND2721(message, *args):

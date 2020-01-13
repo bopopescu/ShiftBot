@@ -27,12 +27,16 @@ def mod(num, size):
 def ping():
     transaction.ping(reconnect=True)
 
+
 def getSlackIDList4MinutesOrder():
     cursor = transaction.cursor()
     try:
         cursor.execute("select SLID from members where minutesDuty_order is not null order by minutesDuty_order desc")
         result = cursor.fetchall()
         return result
+    except Exception as e:
+        logs.logException(e)
+
 
 def getSlackIDofMinutesDuty(*grade):
     cursor = transaction.cursor()
