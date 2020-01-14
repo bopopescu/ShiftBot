@@ -1,3 +1,4 @@
+from flask import Flask
 from slackbot.bot import Bot
 from slackbot.slackclient import SlackClient as client
 
@@ -10,10 +11,6 @@ import time
 import multiprocessing
 
 sys.dont_write_bytecode = True
-conf = configparser.ConfigParser()
-conf.read('./config.ini')
-API_TOKEN = conf['slack']['BOT_USER_OAUTH_ACCESS_TOKEN']
-
 
 def main():
     bot = Bot()
@@ -21,13 +18,17 @@ def main():
 
 
 def sendingSchedule():
-    # schedule.every().monday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'b4')
     # schedule.every().thursday.at('11:00').do(dm.sendReminder4TodaysTrashDuty, API_TOKEN)
-    # schedule.every().wednesday.at('10:00').do(dm.sendReminder4MinutesDuty, API_TOKEN, 'm1')
     schedule.every(6).hours.do(repo.ping)
-    schedule.every(1).hours.do(dm.sendDMTest, API_TOKEN, 'テスト成功')
+    # schedule.every().monday.at('18:30').do(dm.sendReminder4MinutesDuty, 'm1')
+    # schedule.every().wednesday.at('18:30').do(dm.sendReminder4MinutesDuty, 'b4')
+    schedule.every(10).seconds.do(dm.minutesTest)
+
+    i = 0
     while True:
         schedule.run_pending()
+        print(i)
+        i += 1
         time.sleep(1)
 
 

@@ -28,10 +28,10 @@ def ping():
     transaction.ping(reconnect=True)
 
 
-def getSlackIDList4MinutesOrder():
+def getMemberInfo4Minutes():
     cursor = transaction.cursor()
     try:
-        cursor.execute("select SLID from members where minutesDuty_order is not null order by minutesDuty_order desc")
+        cursor.execute("select SLID, name, grade, onDuty_Trash, onDuty_Minutes from members where minutesDuty_order is not null order by minutesDuty_order desc")
         result = cursor.fetchall()
         return result
     except Exception as e:
@@ -304,7 +304,7 @@ def nextMinutesInBusySeasonWithB3(prevGrade):
         cursor.execute("update members set onDuty_minutes = TRUE where name = '%s'" % name)
         return name
 
-    cursor.execute("select count(*) from members where grade = '%s' and kanaOrder_grade is not null" % prevGrade)
+    cursor.execute("select count(*) from members where minutesDuty_order is not null")
     rslt = cursor.fetchone()
     mem = int(rslt[0])
 

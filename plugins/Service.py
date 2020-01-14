@@ -1,14 +1,13 @@
 # coding: utf-8
 from slackbot.bot import respond_to, default_reply, listen_to
 import datetime
+from plugins import DMHandler as dm
 from plugins import Repository as repo
-from plugins.CircularLinkedList import CircularLinkedList
+from plugins.CircularLinkedListRepository import CircularLinkedListRepository
 from logs import LogHandler as logger
 
-@respond_to('circular test')
-def circularTest(*args):
-    members = CircularLinkedList('minutes')
-    members.printList()
+rp = CircularLinkedListRepository()
+
 
 @respond_to(r'^(?=.*(ごみ|ゴミ))(?!.*(2525|2721|終|代わ))')
 def sendTrashDuty2525AND2721(message, *args):
@@ -98,10 +97,10 @@ def sendMinutesTaker(message, *args):
         wd = datetime.date.today().weekday()
         hr = datetime.datetime.now().hour
         
-        if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
-            name = repo.presentMinutes("m1")
-        else:
-            name = repo.presentMinutes("b4")
+        # if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
+        #     name = repo.presentMinutes("m1")
+        # else:
+        name = repo.presentMinutes("b4")
 
         # 休み期間
         # name = repo.presentMinutes('b4')
@@ -175,7 +174,7 @@ def sendNextTrashDuty(message, *args):
         message.reply("申し訳ありません.内部エラーが発生したようです.")
         logger.logException(e)
 
-@respond_to(r'^(?=.*(議事録|議事|ミーティング|mtg))(?=.*終)')
+# @respond_to(r'^(?=.*(議事録|議事|ミーティング|mtg))(?=.*終)')
 def sendNextMinutesDuty(message, *args):
     """
     (議事録or議事)が含まれ,かつ「終」が含まれているメッセージに対し
@@ -191,21 +190,25 @@ def sendNextMinutesDuty(message, *args):
     """
 
     try:
-        repo.doneMinutesDutyBehalfOf()
+        name = rp.nextMinutes()
+        print('定例ミーティングお疲れさまです。\n次回の議事録当番は%sさんです。よろしくお願いします。' % name)
+        # repo.doneMinutesDutyBehalfOf()
 
-        wd = datetime.date.today().weekday()
-        hr = datetime.datetime.now().hour
+        # wd = datetime.date.today().weekday()
+        # hr = datetime.datetime.now().hour
 
-        if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
+        # if (wd == 0 and hr >= 18) or wd == 1 or (wd == 2 and hr < 18):
             # 次回の定例会が水曜日のとき
-            name = repo.nextMinutesInBusySeason("m1")
-        else:
+        #     name = repo.nextMinutesInBusySeason("m1")
+        # else:
             # 次回の定例会が月曜日のとき
-            name = repo.nextMinutesInBusySeason("b4")
+        #     name = repo.nextMinutesInBusySeason("b4")
 
         # 通常時には以下を実行
         # name = repo.nextMinutes()
-        message.send('定例ミーティングお疲れさまです。\n次回の議事録当番は%sさんです。よろしくお願いします。' % name)
+
+        # message.send('定例ミーティングお疲れさまです。\n次回の議事録当番は%sさんです。よろしくお願いします。' % name)
+
     except Exception as e:
         message.reply("申し訳ありません.内部エラーが発生したようです.")
         logger.logException(e)
