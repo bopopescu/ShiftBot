@@ -1,5 +1,5 @@
-from logs import LogHandler as logs
-from plugins import SQLRepository as repo
+from logs.LogHandler import LogHandler
+from plugins.SQLRepository import SQLRepository
 
 class Node:
     """
@@ -24,10 +24,12 @@ class Member:
     
 
 class CircularLinkedList:
+    
 
     def __init__(self, job=None):
         self.head = None
 
+        repo = SQLRepository()
         if job == 'minutes':
             idList = repo.getMemberInfo4Minutes()
             for r in idList:
@@ -36,6 +38,7 @@ class CircularLinkedList:
                 else:
                     m = Member(slackid=r[0], name=r[1], grade=r[2], onDuty=bool(r[3]))
                 self.push(m)
+            self.printList()
         elif job == '2525':
             info = repo.getMemberInfo4Trash('2525')
             for i in info:
@@ -101,14 +104,15 @@ class CircularLinkedList:
                     raise Exception('slack id not found.')
                     break
         except Exception as e:
-            logs.logException(e)
+            pass
+            #logs.logException(e)
 
     def searchMinutes(self):
         current = self.head
 
         try:
             while current != None:
-                if current.isMinutes:
+                if current.onDuty:
                     return current
                 else:
                     current = current.next
@@ -117,7 +121,8 @@ class CircularLinkedList:
                     raise Exception('Nobady is on duty of minutes')
                     break
         except Exception as e:
-            logs.logException(e)
+            pass
+            #logs.logException(e)
 
     def searchonCursor(self):
         current = self.head
@@ -132,7 +137,8 @@ class CircularLinkedList:
                     raise Exception('Nobady has cursor in this list')
                     break
         except Exception as e:
-            logs.logException(e)
+            pass
+            #logs.logException(e)
 
     def setCursorNext(self):
         current = self.searchonCursor()
@@ -146,7 +152,7 @@ class CircularLinkedList:
         temp = self.head 
         if self.head is not None: 
             while(True): 
-                print ('name:%s, isMinutes:%s, cursor:%s, willBeSkipped:%s' % (temp.name, temp.isMinutes, temp.cursor, temp.willBeSkipped))
+                print ('name:%s, onDuty:%s, cursor:%s, willBeSkipped:%s' % (temp.name, temp.onDuty, temp.cursor, temp.willBeSkipped))
                 temp = temp.next
                 if (temp == self.head): 
                     break

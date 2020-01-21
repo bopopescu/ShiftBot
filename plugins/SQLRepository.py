@@ -1,5 +1,5 @@
 # coding: utf-8
-from logs import LogHandler as logs
+from logs.LogHandler import LogHandler
 
 import configparser
 import sys
@@ -37,18 +37,19 @@ class SQLRepository:
         Returns:
             result (list) : [slackID(str), name(str), grade(str), onDuty(bool)]
         """
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
         try:
-            cursor.execute("select members.slackID, members._name, members._grade, minutes._onDuty from members, minutes where members_slackID = minutes.slackID and minutes._order is not null order by minutes._order desc")
+            cursor.execute("select members.slackID, members._name, members._grade, minutes._onDuty from members, minutes where members.slackID = minutes.slackID and minutes._order is not null order by minutes._order desc")
             result = cursor.fetchall()
         except Exception as e:
-            logs.logException(e)
+            pass
+            #logs.logException(e)
         else:
             return result
         finally:
             cursor.close()
-            connection.close()
+            self.connection.close()
 
     def getMemberInfo4Trash(self, room):
         """
@@ -60,18 +61,19 @@ class SQLRepository:
         Returns:
             result (list) : [slackID(str), name(str), grade(str), onDuty(bool)]
         """
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
         try:
             cursor.execute("select members.slackID, members._name, members._grade, trash._onDuty from members, trash where members.slackID = trash.slackID and trash._order is not null and trash._room = '%s' order by trash._order desc" % room)
             result = cursor.fetchall()
         except Exception as e:
-            logs.logException(e)
+            pass
+            #logs.logException(e)
         else:
             return result
         finally:
             cursor.close()
-            connection.close()
+            self.connection.close()
 
     def getNamebySlackID(self, slackID):
         """
@@ -82,18 +84,19 @@ class SQLRepository:
         Returns:
             result (str) : 名前
         """
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
         try:
             cursor.execute("select name from members where SLID = '%s'" % slackID)
             result = cursor.fetchone()
         except Exception as e:
-            logs.logException(e)
+            pass
+            #logs.logException(e)
         else:
             return result[0]
         finally:
             cursor.close()
-            connection.close()
+            self.connection.close()
 
     def presentTrash(self, room):
         """ 部屋番号を引数として受け取り,次回のゴミ捨て当番の名前を返す.
@@ -109,20 +112,21 @@ class SQLRepository:
         Returns:
             pres    (str) : 次回のごみ捨て当番者の名前(名字)
         """
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
 
         try:
             cursor.execute("select members._name from members, trash where members.slackID = trash.slackID and trash._room = '%s' and trash._onDuty = TRUE" % room)
             result = cursor.fetchone()
             pres = result[0]
         except Exception as e:
-            logs.logException(e)
+            pass
+            #logs.logException(e)
         else:
             return pres
         finally:
             cursor.close()
-            connection.close()
+            self.connection.close()
 
     def nextTrash(self, room):
         """ 部屋番号を引数として受け取りごみ捨て当番を更新した後,次回のゴミ捨て当番の名前を返す.
@@ -138,8 +142,8 @@ class SQLRepository:
         Returns:
             presentTrash(room)    (str) : 次回のごみ捨て当番者の名前(名字)
         """
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
     
         cursor.execute("select _order from trash where _room = '%s' and _onDuty = TRUE" % room)
         result = cursor.fetchone()
@@ -155,13 +159,13 @@ class SQLRepository:
             return presentTrash(room)
         except Exception as e:
             connection.rollback()
-            logs.logException(e)
+            #logs.logException(e)
         else:
             connection.commit()
             return presentTrash(room)
         finally:
             cursor.close()
-            connection.close()
+            self.connection.close()
 
     def prevTrash(self, room):
         """ 部屋番号を引数として受け取り,ごみ捨て当番を一つ前の状態に更新する.
@@ -177,8 +181,8 @@ class SQLRepository:
         Returns:
             presentTrash(room)    (str) : 次回のごみ捨て当番者の名前(名字)
         """
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
         cursor.execute("select trashDuty_order from members where room = '%s' and onDuty_trash = TRUE" % room)
         result = cursor.fetchone()
         order = int(result[0])
@@ -193,12 +197,12 @@ class SQLRepository:
             connection.commit()
         except Exception as e:
             connection.rollback()
-            logs.logException(e)
+            #logs.logException(e)
         else:
             return presentTrash(room)
         finally:
             cursor.close()
-            connection.close()
+            self.connection.close()
 
     def presentMinutes(self, *grade):
         """ 次回の議事録当番の名前を返す.
@@ -212,8 +216,8 @@ class SQLRepository:
         Returns:
             pres    (str) : 次回の議事録当番者の名前(名字)
         """
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
         try:
             cursor.execute("select name from members where behalf_minutes = TRUE")
             result = cursor.fetchone()
@@ -226,14 +230,15 @@ class SQLRepository:
             result = cursor.fetchone()
             pres = result[0]
         except Exception as e:
-            logs.logException(e)
+            pass
+            #logs.logException(e)
         finally:
             cursor.close()
         return pres
 
     def nextMinutesWithArgo(self):
         pass
-        # cursor = connection.cursor()
+        # cursor = self.connection.cursor()
         # 曜日ごとで分岐
         # name = rp.nextMinutes
         # try:
@@ -262,8 +267,8 @@ class SQLRepository:
         Returns:
             presentTrash(room)    (str) : 次回のごみ捨て当番者の名前(名字)
         """
-        self.connection.ping(recconect=True)    
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)    
+        cursor = self.connection.cursor()
         cursor.execute("select minutesDuty_order from members where onDuty_minutes = TRUE")
         result = cursor.fetchone()
         order = int(result[0])
@@ -278,14 +283,14 @@ class SQLRepository:
             return presentMinutes()
         except Exception as e:
             connection.rollback()
-            logs.logException(e)
+            #logs.logException(e)
         finally:
             cursor.close()
 
 
     def nextMinutesInBusySeason(self, prevGrade):
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
         cursor.execute("select kanaOrder_grade from members where grade = '%s' and onDuty_minutes = TRUE" % prevGrade)
         result = cursor.fetchone()
         order = int(result[0])
@@ -301,14 +306,14 @@ class SQLRepository:
             return presentMinutes(prevGrade)
         except Exception as e:
             connection.rollback()
-            logs.logException(e)
+            #logs.logException(e)
         finally:
             cursor.close()
 
 
     def nextMinutesInBusySeasonWithB3(self, prevGrade):
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
         try:
             cursor.execute("select name, grade from members where done = FALSE and minutesDuty_order is not null order by minutesDuty_order")
             result = cursor.fetchone()
@@ -336,7 +341,7 @@ class SQLRepository:
             return presentMinutes(prevGrade)
         except Exception as e:
             connection.rollback()
-            logs.logException(e)
+            #logs.logException(e)
         finally:
             cursor.close()
 
@@ -345,13 +350,13 @@ class SQLRepository:
         """
         動作確認：未
         """
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
         try:
             cursor.execute("update members set behalf_trash = TRUE where SLID = '%s'" % slackID)
         except Exception as e:
             connection.rollback()
-            logs.logException(e)
+            #logs.logException(e)
         else:
             connection.commit()
         finally:
@@ -372,13 +377,13 @@ class SQLRepository:
             presentMinutes()    (str) : 次回の議事録当番者の名前(名字)
 
         """
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
         try:
             cursor.execute("update members set behalf_minutes = TRUE where SLID = '%s'" % slkid)
         except Exception as e:
             connection.rollback()
-            logs.logException(e)
+            #logs.logException(e)
         else:
             connection.commit()
         finally:
@@ -390,7 +395,7 @@ class SQLRepository:
         """
         動作確認：未
         """
-        self.connection.ping(recconect=True)
+        self.connection.ping(reconnect=True)
         cursor = connection.cursor()
         try:
             cursor.execute("select name from members where room = '%s' and behalf_trash = TRUE" % room)
@@ -399,7 +404,7 @@ class SQLRepository:
             cursor.execute("update members set behalf_trash = FALSE where name = '%s'" % name)
         except Exception as e:
             connection.rollback()
-            logs.logException(e)
+            #logs.logException(e)
         else:
             connection.commit()
         finally:
@@ -413,8 +418,8 @@ class SQLRepository:
         Returns:
             None
         """
-        self.connection.ping(recconect=True)
-        cursor = connection.cursor()
+        self.connection.ping(reconnect=True)
+        cursor = self.connection.cursor()
         try:
             cursor.execute("select name from members where behalf_minutes = TRUE")
             result = cursor.fetchone()
@@ -424,7 +429,7 @@ class SQLRepository:
             return
         except Exception as e:
             connection.rollback()
-            logs.logException(e)
+            #logs.logException(e)
         else:
             connection.commit()
         finally:

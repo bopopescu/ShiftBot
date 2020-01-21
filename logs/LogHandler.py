@@ -9,28 +9,40 @@ from logging import getLogger, StreamHandler, Formatter, FileHandler
     #     return record.levelno <= self.__level
 
 class LogHandler:
-    sep = '########################'
 
-    logger = getLogger(__name__)
-    logger.setLevel(logging.INFO)
+    def __init__(self, label):
+        if label == 'init':
+            sep = '########################'
+            self.logger = getLogger(__name__)
+            self.logger.setLevel(logging.INFO)
 
-    logFormat = logging.Formatter(sep+'\n%(asctime)s\n\t%(levelname)s - %(message)s\n')
+            logFormat = logging.Formatter(sep+'\n%(asctime)s\n\t%(levelname)s - %(message)s\n')
 
-    def setLogHandler(self, level, filename):
+            self.setLogHandler(logging.ERROR, './error.log', logFormat)
+            self.setLogHandler(logging.WARNING, './warning.log', logFormat)
+            self.setLogHandler(logging.INFO, './info.log', logFormat)
+        elif label != None:
+            self.addLogHandler()
+    
+    def setLogHandler(self, level, filename, logFormat):
         handler = logging.FileHandler(filename)
         handler.setLevel(level)
         handler.setFormatter(logFormat)
-        logger.addHandler(handler)
-
-    setLogHandler(logging.ERROR, './error.log')
-    setLogHandler(logging.WARNING, './warning.log')
-    setLogHandler(logging.INFO, './info.log')
+        self.logger.addHandler(handler)
+    
+    def addLogHandler():
+        sep = '########################'
+        logFormat = logging.Formatter(sep+'\n%(asctime)s\nFile:'+'label'+'.py\n\t%(levelname)s - %(message)s\n')
+        handler = logging.FileHandler('./error.log')
+        handler.setLevel(logging.ERROR)
+        handler.setFormatter(logFormat)
+        self.logger.addHandler(handler)
 
     def logInfo(self, text):
-        logger.info(text)
+        self.logger.info(text)
 
     def logWarning(self, text):
-        logger.warn(text)
+        self.logger.warn(text)
 
     def logException(self, text):
-        logger.exception(text)
+        self.logger.exception(text)

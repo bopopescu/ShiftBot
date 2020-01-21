@@ -1,9 +1,6 @@
-from plugins import Repository as repo
+"""
+from plugins.SQLRepository import SQLRepository as repo
 from slackbot.bot import respond_to
-
-"""
-管理目的以外で(あまり)使ってほしくない
-"""
 
 # 2525室のごみ捨て当番を次の人に交代する
 @respond_to('next trash -r 2525')
@@ -34,5 +31,4 @@ def prevTrash2525(message):
 def prevTrash2721(message):
     repo.prevTrash('2721')
     message.reply(repo.presentTrash('2721'))
-
-
+"""

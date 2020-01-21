@@ -1,9 +1,5 @@
 from slackbot.slackclient import SlackClient as client
 
-from plugins import Repository as repo
-from plugins.CircularLinkedListRepository import CircularLinkedListRepository
-from logs import LogHandler as log
-
 import configparser
 
 class DirectMessageHandler:

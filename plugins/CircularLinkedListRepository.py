@@ -30,6 +30,7 @@ class CircularLinkedListRepository:
         return prev.next.name
 
     def presentMinutes(self):
+        self.minutes.printList()
         member = self.minutes.searchMinutes()
         return member.name
 
