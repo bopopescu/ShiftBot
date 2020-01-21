@@ -22,7 +22,6 @@ def sendingSchedule():
     schedule.every(6).hours.do(repo.ping)
     # schedule.every().monday.at('18:30').do(dm.sendReminder4MinutesDuty, 'm1')
     # schedule.every().wednesday.at('18:30').do(dm.sendReminder4MinutesDuty, 'b4')
-    schedule.every(10).seconds.do(dm.minutesTest)
 
     i = 0
     while True:

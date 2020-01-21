@@ -1,5 +1,5 @@
 from logs import LogHandler as logs
-from plugins import Repository as repo
+from plugins import SQLRepository as repo
 
 class Node:
     """
@@ -13,12 +13,11 @@ class Node:
 
 class Member:
 
-    def __init__(self, slackid, name, grade, isTrash=False, isMinutes=False, cursor=False, willBeSkipped=False):
+    def __init__(self, slackid, name, grade, onDuty=False, cursor=False, willBeSkipped=False):
         self.slackid = slackid
         self.name = name
-        self.grade = grade
-        self.isTrash = isTrash
-        self.isMinutes = isMinutes
+        self.grade = grade  #TODOができればいらない
+        self.onDuty = onDuty
         self.cursor = cursor
         self.willBeSkipped = willBeSkipped
         self.next = None
@@ -32,10 +31,26 @@ class CircularLinkedList:
         if job == 'minutes':
             idList = repo.getMemberInfo4Minutes()
             for r in idList:
-                if r[4]:
-                    m = Member(slackid=r[0], name=r[1], grade=r[2], isTrash=bool(r[3]), isMinutes=bool(r[4]), cursor=True)
+                if r[3]:
+                    m = Member(slackid=r[0], name=r[1], grade=r[2], onDuty=bool(r[3]), cursor=True)
                 else:
-                    m = Member(slackid=r[0], name=r[1], grade=r[2], isTrash=bool(r[3]), isMinutes=bool(r[4]))
+                    m = Member(slackid=r[0], name=r[1], grade=r[2], onDuty=bool(r[3]))
+                self.push(m)
+        elif job == '2525':
+            info = repo.getMemberInfo4Trash('2525')
+            for i in info:
+                if i[3]:
+                    m = Member(slackid=i[0], name=i[1], grade=i[2], onDuty=bool(i[3]), cursor=True)
+                else:
+                    m = Member(slackid=i[0], name=i[1], grade=i[2], onDuty=bool(i[3]))
+                self.push(m)
+        elif job == '2721':
+            info = repo.getMemberInfo4Trash('2721')
+            for i in info:
+                if i[3]:
+                    m = Member(slackid=i[0], name=i[1], grade=i[2], onDuty=bool(i[3]), cursor=True)
+                else:
+                    m = Member(slackid=i[0], name=i[1], grade=i[2], onDuty=bool(i[3]))
                 self.push(m)
 
     def push(self, data):
@@ -59,6 +74,7 @@ class CircularLinkedList:
   
         self.head = ptr1  
   
+    # Extend this.
     def search(self, value):
         cur = self.head
 
@@ -103,21 +119,6 @@ class CircularLinkedList:
         except Exception as e:
             logs.logException(e)
 
-    def searchTrash(self):
-        current = self.head
-        try:
-            while current != None:
-                if current.isTrash:
-                    return current
-                else:
-                    current = current.next
-
-                if current == self.head:
-                    raise Exception('Nobady is on duty of trash')
-                    break
-        except Exception as e:
-            logs.logException(e)
-
     def searchonCursor(self):
         current = self.head
         try:
@@ -137,6 +138,9 @@ class CircularLinkedList:
         current = self.searchonCursor()
         current.cursor = False
         current.next.cursor = True
+    
+    def willBeSkippedDuty(self, slackID):
+        target = self.searchMember(slackID)
 
     def printList(self): 
         temp = self.head 

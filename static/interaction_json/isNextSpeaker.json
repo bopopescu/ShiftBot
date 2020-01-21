@@ -1,0 +1,27 @@
+{
+    "text": "議事録当番が回ってきました．",
+    "attachments": [
+        {
+            "text": "次回の発表担当ですか？",
+            "fallback": "",
+            "callback_id": "next_speaker",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "actions": [
+                {
+                    "name": "isNextSpeaker",
+                    "text": "はい",
+                    "style": "danger",
+                    "type": "button",
+                    "value": "True"
+                },
+                {
+                    "name": "isNextSpeaker",
+                    "text": "いいえ",
+                    "type": "button",
+                    "value": "false"
+                }
+            ]
+        }
+    ]
+}

@@ -1,8 +1,6 @@
 import logging
 from logging import getLogger, StreamHandler, Formatter, FileHandler
 
-sep = '########################'
-
 # class LoggingFilter():
     # def __init__(self, level):
     #    self.__level = level
@@ -10,28 +8,29 @@ sep = '########################'
     # def filter(self, record):
     #     return record.levelno <= self.__level
 
-logger = getLogger(__name__)
-logger.setLevel(logging.INFO)
+class LogHandler:
+    sep = '########################'
 
-logFormat = logging.Formatter(sep+'\n%(asctime)s\n\t%(levelname)s - %(message)s\n')
+    logger = getLogger(__name__)
+    logger.setLevel(logging.INFO)
 
-def setLogHandler(level, filename):
-    handler = logging.FileHandler(filename)
-    handler.setLevel(level)
-    handler.setFormatter(logFormat)
-    logger.addHandler(handler)
+    logFormat = logging.Formatter(sep+'\n%(asctime)s\n\t%(levelname)s - %(message)s\n')
 
+    def setLogHandler(self, level, filename):
+        handler = logging.FileHandler(filename)
+        handler.setLevel(level)
+        handler.setFormatter(logFormat)
+        logger.addHandler(handler)
 
-setLogHandler(logging.ERROR, './error.log')
-setLogHandler(logging.WARNING, './warning.log')
-setLogHandler(logging.INFO, './info.log')
+    setLogHandler(logging.ERROR, './error.log')
+    setLogHandler(logging.WARNING, './warning.log')
+    setLogHandler(logging.INFO, './info.log')
 
+    def logInfo(self, text):
+        logger.info(text)
 
-def logInfo(text):
-    logger.info(text)
+    def logWarning(self, text):
+        logger.warn(text)
 
-def logWarning(text):
-    logger.warn(text)
-
-def logException(text):
-    logger.exception(text)
+    def logException(self, text):
+        logger.exception(text)
