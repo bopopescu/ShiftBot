@@ -1,13 +1,13 @@
-from logs.LogHandler import LogHandler
-from plugins.SQLRepository import SQLRepository
+from threading import Lock
+from plugins.shiftbot.SQLRepository import SQLRepository
 
 class Node:
     """
     In this class, Member class is substituet class for 'Node'
     """
 
-    def __init__(self, data): 
-        self.data = data  
+    def __init__(self, data):
+        self.data = data
         self.next = None
 
 
@@ -21,40 +21,44 @@ class Member:
         self.cursor = cursor
         self.willBeSkipped = willBeSkipped
         self.next = None
-    
+
 
 class CircularLinkedList:
-    
 
-    def __init__(self, job=None):
-        self.head = None
+    """
+        議事録当番決定用にする
+        or
+        ごみ捨てと議事録決定で一つのインスタンスにするか
+    """
 
-        repo = SQLRepository()
-        if job == 'minutes':
-            idList = repo.getMemberInfo4Minutes()
-            for r in idList:
+    _uniqueInstance = None
+    _lock = Lock()
+
+    def __new__(self):
+        raise NotImplementedError('Cannot initialize via constructor')
+
+    @classmethod
+    def __internal_new__(cls, params):
+        inst = super().__new__(cls)
+
+        inst.head = None
+        if params:
+            for p in params:
                 if r[3]:
-                    m = Member(slackid=r[0], name=r[1], grade=r[2], onDuty=bool(r[3]), cursor=True)
+                    m = Member(slackid=p[0], name=p[1], grade=p[2], onDuty=bool(p[3]), cursor=True)
                 else:
-                    m = Member(slackid=r[0], name=r[1], grade=r[2], onDuty=bool(r[3]))
+                    m = Member(slackid=p[0], name=p[1], grade=p[2], onDuty=bool(p[3]))
                 self.push(m)
-            self.printList()
-        elif job == '2525':
-            info = repo.getMemberInfo4Trash('2525')
-            for i in info:
-                if i[3]:
-                    m = Member(slackid=i[0], name=i[1], grade=i[2], onDuty=bool(i[3]), cursor=True)
-                else:
-                    m = Member(slackid=i[0], name=i[1], grade=i[2], onDuty=bool(i[3]))
-                self.push(m)
-        elif job == '2721':
-            info = repo.getMemberInfo4Trash('2721')
-            for i in info:
-                if i[3]:
-                    m = Member(slackid=i[0], name=i[1], grade=i[2], onDuty=bool(i[3]), cursor=True)
-                else:
-                    m = Member(slackid=i[0], name=i[1], grade=i[2], onDuty=bool(i[3]))
-                self.push(m)
+
+        return inst
+
+    @classmethod
+    def getInstance(cls, *params):
+        if not cls._uniqueInstance:
+            with cls._lock:
+                if not cls._uniqueInstance:
+                    cls._uniqueInstance = cls.__internal_new__(params)
+        return cls._uniqueInstance
 
     def push(self, data):
         if type(data) is Member:
@@ -63,21 +67,18 @@ class CircularLinkedList:
             ptr1 = Member(data)
         temp = self.head
 
-        ptr1.next = self.head 
-  
-        # If linked list is not None then set the next of 
-        # last node 
-        if self.head is not None: 
+        ptr1.next = self.head
+
+        if self.head is not None:
             while(temp.next != self.head):
-                temp = temp.next 
-            temp.next = ptr1 
-  
-        else: 
-            ptr1.next = ptr1 # For the first node 
-  
-        self.head = ptr1  
-  
-    # Extend this.
+                temp = temp.next
+            temp.next = ptr1
+
+        else:
+            ptr1.next = ptr1
+
+        self.head = ptr1
+
     def search(self, value):
         cur = self.head
 
@@ -90,7 +91,7 @@ class CircularLinkedList:
             if cur == self.head:
                 return False
                 break
-    
+
     def searchMember(self, slackid):
         current = self.head
         try:
@@ -144,15 +145,15 @@ class CircularLinkedList:
         current = self.searchonCursor()
         current.cursor = False
         current.next.cursor = True
-    
+
     def willBeSkippedDuty(self, slackID):
         target = self.searchMember(slackID)
 
-    def printList(self): 
-        temp = self.head 
-        if self.head is not None: 
-            while(True): 
+    def printList(self):
+        temp = self.head
+        if self.head is not None:
+            while(True):
                 print ('name:%s, onDuty:%s, cursor:%s, willBeSkipped:%s' % (temp.name, temp.onDuty, temp.cursor, temp.willBeSkipped))
                 temp = temp.next
-                if (temp == self.head): 
+                if (temp == self.head):
                     break

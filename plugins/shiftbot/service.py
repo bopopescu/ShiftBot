@@ -1,10 +1,8 @@
 # coding: utf-8
-from slackbot.bot import respond_to, default_reply, listen_to
-import datetime
+from slackbot.bot import respond_to, default_reply
 
-from plugins.DirectMessageHandler import DirectMessageHandler as dm
-from plugins.SQLRepository import SQLRepository
-from plugins.CircularLinkedListRepository import CircularLinkedListRepository
+from plugins.shiftbot.SQLRepository import SQLRepository
+from plugins.shiftbot.CircularLinkedListRepository import CircularLinkedListRepository
 from logs.LogHandler import LogHandler
 
 
@@ -12,7 +10,7 @@ rp = CircularLinkedListRepository()
 repo = SQLRepository()
 
 logger = LogHandler('init')
-    
+
 @respond_to(r'^(?=.*(ごみ|ゴミ))(?!.*(2525|2721|終|代わ))')
 def sendTrashDuty2525AND2721(message, *args):
     """

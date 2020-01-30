@@ -156,7 +156,6 @@ class SQLRepository:
         try:
             cursor.execute("update trash set _onDuty = FALSE where _room = '%s' and _order = '%s'" % (room, order))
             cursor.execute("update ttrash set _onDuty = TRUE where _room = '%s' and _order = '%s'" % (room, mod(order + 1, mem)))
-            return presentTrash(room)
         except Exception as e:
             connection.rollback()
             #logs.logException(e)

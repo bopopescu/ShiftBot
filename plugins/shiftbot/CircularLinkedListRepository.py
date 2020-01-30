@@ -1,4 +1,4 @@
-from plugins.CircularLinkedList import CircularLinkedList
+from plugins.shiftbot.CircularLinkedList import CircularLinkedList
 
 class CircularLinkedListRepository:
 
@@ -6,7 +6,7 @@ class CircularLinkedListRepository:
         self.minutes = CircularLinkedList('minutes')
         self.trash2525 = CircularLinkedList('2525')
         self.trash2721 = CircularLinkedList('2721')
-    
+
     def presentTrash(self, room=None):
         m2525 = self.trash2525.searchTrash()
         m2721 = self.trash2721.searchTrash()
@@ -16,7 +16,7 @@ class CircularLinkedListRepository:
             return m2721.name
         else:
             return (m2525.name, m2721.name)
-    
+
     def nextTrashin2525(self):
         prev = self.trash2525.searchonCursor()
         prev.onDuty = False
@@ -30,7 +30,6 @@ class CircularLinkedListRepository:
         return prev.next.name
 
     def presentMinutes(self):
-        self.minutes.printList()
         member = self.minutes.searchMinutes()
         return member.name
 
@@ -76,6 +75,6 @@ class CircularLinkedListRepository:
                     break
 
         return cur.name
-    
+
     def willBeSkippedNextMinutes(self, slackID):
         mem = self.minutes.willBeSkippedDuty(slackID)
